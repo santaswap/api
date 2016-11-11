@@ -1,0 +1,36 @@
+service: users
+
+provider:
+  name: aws
+  runtime: nodejs4.3
+  cfLogs: true
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - 'dynamodb:*'
+      Resource: 'arn:aws:dynamodb:us-east-1:*:*'
+
+functions:
+  getAll:
+    handler: get.handler
+    events:
+      - http:
+          path: users
+          method: get
+          integration: lambda
+
+resources:
+  Resources:
+    UserTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: User
+        AttributeDefinitions:
+          - AttributeName: email
+            AttributeType: S
+        KeySchema:
+          - AttributeName: email
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
