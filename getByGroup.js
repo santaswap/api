@@ -19,7 +19,7 @@ var getGroupId = (event) => {
         let id = event.path.id;
         resolve(id); 
     });
-}
+};
 
 var getUsers = (groupId) => {
   var params = {
