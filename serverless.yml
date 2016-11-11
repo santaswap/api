@@ -12,12 +12,23 @@ provider:
 
 functions:
   getAll:
-    handler: get.handler
+    handler: getAll.handler
     events:
       - http:
           path: users
           method: get
           integration: lambda
+  getByGroup:
+    handler: getByGroup.handler
+    events:
+      - http:
+          path: groups/{id}/users
+          method: get
+          integration: lambda
+          request:
+            parameters:
+              paths:
+                id: true
 
 resources:
   Resources:
@@ -26,11 +37,28 @@ resources:
       Properties:
         TableName: User
         AttributeDefinitions:
-          - AttributeName: email
+          - AttributeName: id
             AttributeType: S
         KeySchema:
-          - AttributeName: email
+          - AttributeName: id
             KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    UserGroupTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: UserGroup
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: groupId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: groupId
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1

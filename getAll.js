@@ -5,22 +5,15 @@ var docClient = new AWS.DynamoDB.DocumentClient({
 });
 
 module.exports.handler = (event, context, callback) => {
-  console.log('Getting users');
   getUsers()
-    .then( users => {
-      console.log('Got users', JSON.stringify(users));
-      console.log('User items', JSON.stringify(users.Items));
-      context.done(null, users.Items);
-    })
+    .then( users => context.done(null, users.Items) )
     .catch( err => {
       console.log('Unexpected error getting users: ', JSON.stringify(err));
       context.done('Unexpected error');
   });
-  console.log('Finished getting users');
 };
 
 var getUsers = () => {
-  console.log('Scanning table');
   var params = {
     TableName: 'User'
   };
