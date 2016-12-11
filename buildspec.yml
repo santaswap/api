@@ -1,9 +1,9 @@
 version: 0.1
 
 phases:
-#   install:
-#     commands:
-#       - command
+  install:
+    commands:
+      - npm i -g serverless
 #   pre_build:
 #     commands:
 #       - command
