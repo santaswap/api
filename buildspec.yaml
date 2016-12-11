@@ -1,0 +1,19 @@
+version: 0.1
+
+phases:
+#   install:
+#     commands:
+#       - command
+#   pre_build:
+#     commands:
+#       - command
+#   build:
+#     commands:
+#       - command
+  post_build:
+    commands:
+      - serverless deploy
+artifacts:
+  type: zip
+  files:
+    - README.md
