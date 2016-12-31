@@ -4,7 +4,7 @@ provider:
   name: aws
   runtime: nodejs4.3
   cfLogs: true
-  deploymentBucket: automation-serverless-${env:ACCOUNT_ID}
+  deploymentBucket: automation-serverlessartifact-${env:ACCOUNT_ID}
   iamRoleStatements:
     - Effect: Allow
       Action:
