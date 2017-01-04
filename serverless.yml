@@ -1,76 +1,65 @@
-service: users
+service: Users
 
 provider:
   name: aws
   runtime: nodejs4.3
-  cfLogs: true
-  deploymentBucket: automation-serverlessartifact-${env:ACCOUNT_ID}
+  stage: Dev
+  deploymentBucket: automation-serverlessartifact-${opt:accountId, env:ACCOUNT_ID}
+  environment:
+    TABLE_NAME: { Ref: UsersTable }
+    TABLE_PREFIX: ${opt:stage, self:provider.stage}-
+    STAGE: ${opt:stage, self:provider.stage}
   iamRoleStatements:
     - Effect: Allow
       Action:
         - dynamodb:*
-      Resource: arn:aws:dynamodb:us-east-1:*:*
+      Resource: '*'
 
 functions:
-  put:
-    handler: put.handler
+  GetUsers:
+    handler: list.list
+    name: ${opt:stage, self:provider.stage}-GetUsers
     events:
       - http:
           path: users
           method: put
-          integration: lambda
-          request:
-            passThrough: WHEN_NO_TEMPLATES
-            template:
-              application/json: '{ "data": $input.json("$") }'
-  getAll:
-    handler: getAll.handler
+          cors: true
+
+  GetUsersByGroup:
+    handler: getByGroup.get
+    name: ${opt:stage, self:provider.stage}-GetUsersByGroup
     events:
       - http:
-          path: users
-          method: get
-          integration: lambda
-  getByGroup:
-    handler: getByGroup.handler
-    events:
-      - http:
-          path: groups/{id}/users
-          method: get
-          integration: lambda
-          request:
-            parameters:
-              paths:
-                id: true
+          path: groups/{groupId}/users
+          method: put
+          cors: true
 
 resources:
   Resources:
-    UserTable:
+    UsersTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: User
+        TableName: '${opt:stage, self:provider.stage}-Users'
         AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-    UserGroupTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: UserGroup
-        AttributeDefinitions:
-          - AttributeName: userId
-            AttributeType: S
           - AttributeName: groupId
             AttributeType: S
-        KeySchema:
           - AttributeName: userId
-            KeyType: HASH
+            AttributeType: S
+        KeySchema:
           - AttributeName: groupId
+            KeyType: HASH
+          - AttributeName: userId
             KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+  Outputs:
+    TableName:
+      Description: Name of the users table for this stage
+      Value: { Ref: UsersTable }
+      Export:
+        Name: '${opt:stage, self:provider.stage}-UsersTableName'
+
+package:
+  exclude:
+    - node_modules/serverless/**
