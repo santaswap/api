@@ -8,6 +8,6 @@
     "start": "serverless deploy"
   },
   "dependencies": {
-    "serverless": "1.4.0"
+    "serverless": "1.2.1"
   }
 }
