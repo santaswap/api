@@ -17,21 +17,30 @@ provider:
 
 functions:
   GetUsers:
-    handler: list.list
+    handler: users/list.list
     name: ${opt:stage, self:provider.stage}-GetUsers
     events:
       - http:
           path: users
-          method: put
+          method: get
           cors: true
 
   GetUsersByGroup:
-    handler: getByGroup.get
+    handler: users/getByGroup.get
     name: ${opt:stage, self:provider.stage}-GetUsersByGroup
     events:
       - http:
           path: groups/{groupId}/users
-          method: put
+          method: get
+          cors: true
+
+  CreateUser:
+    handler: users/post.post
+    name: ${opt:stage, self:provider.stage}-CreateUser
+    events:
+      - http:
+          path: groups/{groupId}/users
+          method: post
           cors: true
 
 resources:
