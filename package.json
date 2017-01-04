@@ -1,0 +1,13 @@
+{
+  "name": "users-serverless",
+  "version": "0.0.1",
+  "description": "serverless crud service for santa swap",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "start": "serverless deploy"
+  },
+  "dependencies": {
+    "serverless": "1.4.0"
+  }
+}
