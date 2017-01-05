@@ -43,6 +43,15 @@ functions:
           method: post
           cors: true
 
+  UpdateUser:
+    handler: users/put.put
+    name: ${opt:stage, self:provider.stage}-UpdateUser
+    events:
+      - http:
+          path: groups/{groupId}/users/{userId}
+          method: put
+          cors: true
+
 resources:
   Resources:
     UsersTable:
