@@ -33,7 +33,6 @@ module.exports.put = (event, context, callback) => {
           groupId: user.groupId
       },
       UpdateExpression: expression.updateExpression,
-      ExpressionAttributeNames: expression.expressionAttributeNames,
       ExpressionAttributeValues: expression.expressionAttributeValues
     };
     console.log('Updating user with params', params);
@@ -44,7 +43,6 @@ module.exports.put = (event, context, callback) => {
 
   var getExpression = (user) => {
     let updateExpression = 'set ';
-    let expressionAttributeNames = {};
     let expressionAttributeValues = {};
     if(user.name) {
       updateExpression += 'bio = :bio';
@@ -62,7 +60,6 @@ module.exports.put = (event, context, callback) => {
     }
     return {
       updateExpression: updateExpression,
-      expressionAttributeNames: expressionAttributeNames,
       expressionAttributeValues: expressionAttributeValues
     };
   };
