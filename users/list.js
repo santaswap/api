@@ -12,6 +12,9 @@ module.exports.list = (event, context, callback) => {
             console.log('Got users', users);
             const response = {
                 statusCode: 200,
+                headers: {
+                    'Access-Control-Allow-Origin': '*'
+                },
                 body: JSON.stringify(users.Items)
         };
         callback(null, response);
