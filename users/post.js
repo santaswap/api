@@ -27,12 +27,11 @@ module.exports.post = (event, context, callback) => {
   var createUser = (user) => {
     var params = {
       TableName: process.env.TABLE_NAME,
-      Item: user,
-      ReturnValues: 'ALL_NEW'
+      Item: user
     };
     console.log('Creating user with params', params);
     return new Promise( (resolve, reject) => {
-      docs.put(params, (err, data) => err ? reject(err) : resolve(data) );
+      docs.put(params, (err, data) => err ? reject(err) : resolve(user) );
     });
   };
 
