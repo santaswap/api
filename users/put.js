@@ -29,8 +29,8 @@ module.exports.put = (event, context, callback) => {
     var params = {
       TableName: process.env.TABLE_NAME,
       Key: { 
-          userId: user.id,
-          groupId: group.id
+          userId: user.userId,
+          groupId: user.groupId
       },
       UpdateExpression: expression.updateExpression,
       ExpressionAttributeNames: expression.expressionAttributeNames,
