@@ -27,7 +27,7 @@ functions:
 
   GetUsersByGroup:
     handler: users/getByGroup.get
-    name: ${opt:stage, self:provider.stage}-User-GetByGroup
+    name: ${opt:stage, self:provider.stage}-Users-GetByGroup
     events:
       - http:
           path: groups/{groupId}/users
@@ -36,7 +36,7 @@ functions:
 
   CreateUser:
     handler: users/create.post
-    name: ${opt:stage, self:provider.stage}-User-Create
+    name: ${opt:stage, self:provider.stage}-Users-Create
     events:
       - http:
           path: groups/{groupId}/users
@@ -45,7 +45,7 @@ functions:
 
   UpdateUser:
     handler: users/update.put
-    name: ${opt:stage, self:provider.stage}-User-Update
+    name: ${opt:stage, self:provider.stage}-Users-Update
     events:
       - http:
           path: groups/{groupId}/users/{userId}
