@@ -44,11 +44,11 @@ module.exports.put = (event, context, callback) => {
   var getExpression = (user) => {
     let updateExpression = 'set ';
     let expressionAttributeValues = {};
-    if(user.name) {
+    if(user.bio) {
       updateExpression += 'bio = :bio';
       expressionAttributeValues[':bio'] = user.bio; 
     }
-    if(user.rules) {
+    if(user.address) {
       updateExpression ? updateExpression += ', ' : updateExpression += ' ';
       updateExpression += 'address = :address';
       expressionAttributeValues[':address'] = user.address; 
