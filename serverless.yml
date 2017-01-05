@@ -16,9 +16,9 @@ provider:
       Resource: '*'
 
 functions:
-  GetUsers:
+  ListUsers:
     handler: users/list.list
-    name: ${opt:stage, self:provider.stage}-GetUsers
+    name: ${opt:stage, self:provider.stage}-Users-List
     events:
       - http:
           path: users
@@ -27,7 +27,7 @@ functions:
 
   GetUsersByGroup:
     handler: users/getByGroup.get
-    name: ${opt:stage, self:provider.stage}-GetUsersByGroup
+    name: ${opt:stage, self:provider.stage}-User-GetByGroup
     events:
       - http:
           path: groups/{groupId}/users
@@ -35,8 +35,8 @@ functions:
           cors: true
 
   CreateUser:
-    handler: users/post.post
-    name: ${opt:stage, self:provider.stage}-CreateUser
+    handler: users/create.post
+    name: ${opt:stage, self:provider.stage}-User-Create
     events:
       - http:
           path: groups/{groupId}/users
@@ -44,8 +44,8 @@ functions:
           cors: true
 
   UpdateUser:
-    handler: users/put.put
-    name: ${opt:stage, self:provider.stage}-UpdateUser
+    handler: users/update.put
+    name: ${opt:stage, self:provider.stage}-User-Update
     events:
       - http:
           path: groups/{groupId}/users/{userId}
@@ -77,6 +77,16 @@ resources:
       Value: { Ref: UsersTable }
       Export:
         Name: '${opt:stage, self:provider.stage}-UsersTableName'
+    UsersEndpoint:
+      Description: Invokable URL for the users serverless API for this stage
+      Value:
+        Fn::Join:
+          - ''
+          - - https://
+            - Ref: ApiGatewayRestApi
+            - .execute-api.us-east-1.amazonaws.com/Dev
+      Export:
+        Name: '${opt:stage, self:provider.stage}-UsersEndpoint'
 
 package:
   exclude:
