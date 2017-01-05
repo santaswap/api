@@ -25,9 +25,9 @@ functions:
           method: get
           cors: true
 
-  GetUsersByGroup:
-    handler: users/getByGroup.get
-    name: ${opt:stage, self:provider.stage}-Users-GetByGroup
+  ListUsersByGroup:
+    handler: users/getByGroup.list
+    name: ${opt:stage, self:provider.stage}-Users-ListByGroup
     events:
       - http:
           path: groups/{groupId}/users

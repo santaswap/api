@@ -4,7 +4,7 @@ const docs = new AWS.DynamoDB.DocumentClient({
     apiVersion: '2012-08-10'
 });
 
-module.exports.get = (event, context, callback) => {
+module.exports.list = (event, context, callback) => {
     console.log('Getting users by group');
 
     let groupId = event.pathParameters.groupId;
