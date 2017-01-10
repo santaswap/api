@@ -1,5 +1,7 @@
+#name of service
 service: Users
 
+#general information about the service
 provider:
   name: aws
   runtime: nodejs4.3
@@ -15,14 +17,22 @@ provider:
         - dynamodb:*
       Resource: '*'
 
+#where I want to change
+#each function is a lambda function
 functions:
   ListUsers:
+  #which file the actual code is being called
     handler: users/list.list
+    #name of lamda function
     name: ${opt:stage, self:provider.stage}-Users-List
+    #here are the things that can call or trigger this function
     events:
+    #creates a new api endpoint, creates a string
+    #go to UI file and look at src, environment
       - http:
           path: users
           method: get
+          #cors = cross origin request, things outside domain can call it
           cors: true
 
   ListUsersByGroup:
@@ -52,12 +62,12 @@ functions:
           method: put
           cors: true
 
+#specify all the other things we want to create for AWS resources
 resources:
   Resources:
     UsersTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: '${opt:stage, self:provider.stage}-Users'
         AttributeDefinitions:
           - AttributeName: groupId
             AttributeType: S
