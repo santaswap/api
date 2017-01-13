@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+echo Getting author info from commit $TRAVIS_COMMIT
 AUTHOR_NAME=$(git log -1 $TRAVIS_COMMIT --pretty="%aN")
 FIRST_NAME=${AUTHOR_NAME%% *}
 echo Commit author is $AUTHOR_NAME, first name is $FIRST_NAME
