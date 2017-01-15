@@ -94,7 +94,7 @@ resources:
           - ''
           - - https://
             - Ref: ApiGatewayRestApi
-            - .execute-api.us-east-1.amazonaws.com/Dev
+            - '.execute-api.us-east-1.amazonaws.com/${opt:stage, self:provider.stage}'
       Export:
         Name: '${opt:stage, self:provider.stage}-UsersEndpoint'
 
