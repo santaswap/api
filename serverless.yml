@@ -17,7 +17,7 @@ provider:
         - dynamodb:*
       Resource: '*'
 
-#where I want to change
+#where I want to change comment
 #each function is a lambda function
 functions:
   ListUsers:
