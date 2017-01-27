@@ -17,7 +17,6 @@ provider:
         - dynamodb:*
       Resource: '*'
 
-#where I want to change
 #each function is a lambda function
 functions:
   ListUsers:
@@ -32,7 +31,6 @@ functions:
       - http:
           path: users
           method: get
-          #cors = cross origin request, things outside domain can call it
           cors: true
 
   ListUsersByGroup:
