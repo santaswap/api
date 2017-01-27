@@ -30,5 +30,5 @@ var getUsers = () => {
         TableName: process.env.TABLE_NAME
     };
     console.log('Getting all users with params', params);
-    return docs.query(params).promise();
+    return docs.scan(params).promise();
 };

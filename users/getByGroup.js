@@ -30,11 +30,11 @@ module.exports.list = (event, context, callback) => {
 var getUsersByGroup = (groupId) => {
     var params = {
         TableName: process.env.TABLE_NAME,
-        KeyConditionExpression: 'HashKey = :groupId',
+        KeyConditionExpression: 'groupId = :groupId',
         ExpressionAttributeValues: {
             ":groupId": groupId
         }
     };
     console.log('Getting all users with params', params);
-    return docs.scan(params).promise();
+    return docs.query(params).promise();
 };
