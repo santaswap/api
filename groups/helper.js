@@ -65,7 +65,10 @@ let sendSuccess = (group, callback) => {
   console.log('Replying with group', group);
   const response = {
     statusCode: 200,
-    headers: { 'Access-Control-Allow-Origin': '*' },
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true
+    },
     body: JSON.stringify(group)
   };
   callback(null, response);
@@ -75,7 +78,10 @@ let sendError = (err, context) => {
   console.log('Unexpected error', err);
   const response = {
     statusCode: 500,
-    headers: { 'Access-Control-Allow-Origin': '*' },
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true
+    },
     body: 'Error'
   };
   context.fail(response);
