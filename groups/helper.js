@@ -9,7 +9,7 @@ let mapGroupsToResponse = (groups) => {
 
 let mapGroupToResponse = (group) => {
   return new Promise( resolve => resolve({
-      groupId: group.groupId,
+      id: group.groupId,
       name: group.name,
       code: group.code,
       rules: group.rules,
@@ -23,7 +23,8 @@ let mapGroupToResponse = (group) => {
 let mapUsersToResponse = (users) => {
   return users.map( user => {
     return {
-      userId: user.userId,
+      groupId: user.groupId,
+      id: user.userId,
       name: user.name,
       picture: user.picture,
       address: user.address,
@@ -35,7 +36,7 @@ let mapUsersToResponse = (users) => {
 let mapUserToResponse = (user) => {
   return new Promise( resolve => resolve({
       groupId: user.groupId,
-      userId: user.userId,
+      id: user.userId,
       name: user.name,
       picture: user.picture,
       address: user.address,
