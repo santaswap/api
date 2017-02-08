@@ -14,6 +14,7 @@ module.exports.handler = (event, context, callback) => {
     .then(saveProfile)
     .then(profile => mapRequestAndProfileToGroup(event, profile))
     .then(saveGroup)
+    // TODO get objects from functions above instead of reading immediately after writing
     .then(getGroupItems)
     .then(helper.mapGroupItemsToGroup)
     .then(helper.mapGroupToResponse)
