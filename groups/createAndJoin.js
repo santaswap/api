@@ -30,7 +30,7 @@ let mapRequestToProfile = (request) => {
   return Promise.resolve({
     groupId: uuid.v1(),
     type: helper.PROFILE_TYPE_PREFIX + profile.userId,
-    userId: profile.userId,
+    userId: profile.id,
     name: profile.name,
     picture: profile.picture,
     createdAt: timestamp,

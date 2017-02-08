@@ -25,7 +25,7 @@ let filterGroups = (groups, event) => {
   console.log('Filtering all groups by user', JSON.stringify(groups), userId);
   return new Promise( resolve => resolve(groups.filter(group => {
     console.log(group, group.users);
-    return group.users.some( user => user.userId === userId) 
+    return group.users.some( user => user.id === userId) 
   })
   )
   );
