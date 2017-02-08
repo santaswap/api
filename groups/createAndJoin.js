@@ -25,14 +25,14 @@ module.exports.handler = (event, context, callback) => {
 let mapRequestToProfile = (request) => {
   let timestamp = new Date().getTime();
   const body = JSON.parse(request.body);
-  const user = body.user;
-  console.log('Mapping request to user profile with params', user);
+  const profile = body.profile;
+  console.log('Mapping request to user profile with params', profile);
   return Promise.resolve({
     groupId: uuid.v1(),
-    type: helper.PROFILE_TYPE_PREFIX + user.userId,
-    userId: user.userId,
-    name: user.name,
-    picture: user.picture,
+    type: helper.PROFILE_TYPE_PREFIX + profile.userId,
+    userId: profile.userId,
+    name: profile.name,
+    picture: profile.picture,
     createdAt: timestamp,
     updatedAt: timestamp
   });

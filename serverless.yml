@@ -98,14 +98,3 @@ resources:
       Value: { Ref: GroupsTable }
       Export:
         Name: ${opt:stage, self:provider.stage}-GroupsTable
-    
-    GroupsEndpoint:
-      Description: Invokable URL for these services for the ${opt:stage, self:provider.stage} stage
-      Value:
-        Fn::Join:
-          - ''
-          - - https://
-            - Ref: ApiGatewayRestApi
-            - .execute-api.us-east-1.amazon.aws.com/${opt:stage, self:provider.stage}
-      Export:
-        Name: ${opt:stage, self:provider.stage}-GroupsEndpoint
