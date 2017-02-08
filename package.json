@@ -1,7 +1,10 @@
 {
-  "name": "users-serverless",
+  "name": "santaswap-serverless",
   "version": "0.0.1",
-  "description": "serverless crud service for santa swap",
-  "author": "",
-  "license": "MIT"
+  "description": "serverless functions for santa swap",
+  "license": "MIT",
+  "dependencies": {
+    "random-number": "0.0.7",
+    "uuid": "^3.0.1"
+  }
 }

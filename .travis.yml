@@ -4,11 +4,11 @@ node_js:
 
 install:
   - npm i -g serverless
-  - npm install --no-optional
+  - npm i --no-optional
 
 cache:
   - directories: node_modules
     
 script:
-  - chmod +x ./travis-deploy/deploy.sh
-  - ./travis-deploy/deploy.sh
+  - chmod +x ./travis-deploy.sh
+  - ./travis-deploy.sh

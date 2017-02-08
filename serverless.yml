@@ -1,15 +1,12 @@
-#name of service
-service: Users
+service: SantaSwap-Serverless
 
-#general information about the service
 provider:
   name: aws
   runtime: nodejs4.3
-  stage: Dev
+  stage: Local
   deploymentBucket: automation-serverlessartifact-${opt:accountId, env:ACCOUNT_ID}
   environment:
-    TABLE_NAME: { Ref: UsersTable }
-    TABLE_PREFIX: ${opt:stage, self:provider.stage}-
+    GROUPS_TABLE: { Ref: GroupsTable }
     STAGE: ${opt:stage, self:provider.stage}
   iamRoleStatements:
     - Effect: Allow
@@ -17,85 +14,98 @@ provider:
         - dynamodb:*
       Resource: '*'
 
-#each function is a lambda function
 functions:
-  ListUsers:
-  #which file the actual code is being called
-    handler: users/list.list
-    #name of lamda function
-    name: ${opt:stage, self:provider.stage}-Users-List
-    #here are the things that can call or trigger this function
-    events:
-    #creates a new api endpoint, creates a string
-    #go to UI file and look at src, environment
-      - http:
-          path: users
-          method: get
-          cors: true
-
-  ListUsersByGroup:
-    handler: users/getByGroup.list
-    name: ${opt:stage, self:provider.stage}-Users-ListByGroup
+  
+  CreateAndJoin:
+    handler: groups/createAndJoin.handler
+    name: ${opt:stage, self:provider.stage}-Groups-CreateAndJoin
     events:
       - http:
-          path: groups/{groupId}/users
+          path: groups
+          method: post
+          cors: true
+  
+  Update:
+    handler: groups/updateGroup.handler
+    name: ${opt:stage, self:provider.stage}-Groups-Update
+    events:
+      - http:
+          path: groups/{groupId}
+          method: put
+          cors: true
+  
+  ListByUser:
+    handler: groups/listByUser.handler
+    name: ${opt:stage, self:provider.stage}-Groups-ListByUser
+    events:
+      - http:
+          path: users/{userId}/groups
           method: get
           cors: true
-
-  CreateUser:
-    handler: users/create.post
-    name: ${opt:stage, self:provider.stage}-Users-Create
+  
+  Get:
+    handler: groups/get.handler
+    name: ${opt:stage, self:provider.stage}-Groups-Get
+    events:
+      - http:
+          path: groups/{groupId}
+          method: get
+          cors: true
+  
+  Join:
+    handler: groups/join.handler
+    name: ${opt:stage, self:provider.stage}-Groups-Join
     events:
       - http:
           path: groups/{groupId}/users
           method: post
           cors: true
+  
+  # UpdateUser:
+  #   handler: users/update.handler
+  #   name: ${opt:stage, self:provider.stage}-Users-Update
+  #   events:
+  #     - http:
+  #         path: users/{userId}
+  #         method: put
+  #         cors: true
 
-  UpdateUser:
-    handler: users/update.put
-    name: ${opt:stage, self:provider.stage}-Users-Update
-    events:
-      - http:
-          path: groups/{groupId}/users/{userId}
-          method: put
-          cors: true
-
-#specify all the other things we want to create for AWS resources
 resources:
+
   Resources:
-    UsersTable:
+
+    GroupsTable:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
           - AttributeName: groupId
             AttributeType: S
-          - AttributeName: userId
+          - AttributeName: type
             AttributeType: S
         KeySchema:
           - AttributeName: groupId
             KeyType: HASH
-          - AttributeName: userId
+          - AttributeName: type
             KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+
   Outputs:
-    TableName:
-      Description: Name of the users table for this stage
-      Value: { Ref: UsersTable }
+
+    GroupsTable:
+      Description: Name of the Groups table for the ${opt:stage, self:provider.stage} stage
+      Value: { Ref: GroupsTable }
       Export:
-        Name: '${opt:stage, self:provider.stage}-UsersTableName'
-    UsersEndpoint:
-      Description: Invokable URL for the users serverless API for this stage
+        Name: ${opt:stage, self:provider.stage}-GroupsTable
+    
+    Endpoint:
+      Description: Invokable URL for these services for the ${opt:stage, self:provider.stage} stage
       Value:
         Fn::Join:
           - ''
           - - https://
             - Ref: ApiGatewayRestApi
-            - '.execute-api.us-east-1.amazonaws.com/${opt:stage, self:provider.stage}'
+            - .execute-api.us-east-1.amazon.aws.com/${opt:stage, self:provider.stage}
       Export:
-        Name: '${opt:stage, self:provider.stage}-UsersEndpoint'
-
-package:
-  exclude:
-    - node_modules/serverless/**
+        Name: ${opt:stage, self:provider.stage}-Endpoint
