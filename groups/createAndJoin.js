@@ -47,7 +47,7 @@ let mapRequestAndProfileToGroup = (request, profile) => {
     groupId: profile.groupId,
     type: helper.GROUP_TYPE,
     name: group.name,
-    code: rand(),
+    code: rand().toString(),
     rules: 'Be excellent to each other',
     pictures: [profile.picture],
     matched: false,
