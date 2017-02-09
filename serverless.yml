@@ -57,7 +57,7 @@ functions:
     name: ${opt:stage, self:provider.stage}-Groups-Join
     events:
       - http:
-          path: groups/{code}/users
+          path: groups/{groupId}/users
           method: post
           cors: true
   
