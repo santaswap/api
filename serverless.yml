@@ -89,7 +89,7 @@ resources:
             KeyType: HASH
           - AttributeName: type
             KeyType: RANGE
-        LocalSecondaryIndexs:
+        LocalSecondaryIndexes:
           - IndexName: GroupCode
             KeySchema:
               - AttributeName: groupId
