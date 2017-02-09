@@ -57,7 +57,7 @@ functions:
     name: ${opt:stage, self:provider.stage}-Groups-Join
     events:
       - http:
-          path: groups/{groupId}/users
+          path: groups/{code}/users
           method: post
           cors: true
   
@@ -82,11 +82,22 @@ resources:
             AttributeType: S
           - AttributeName: type
             AttributeType: S
+          - AttributeName: code
+            AttributeType: S
         KeySchema:
           - AttributeName: groupId
             KeyType: HASH
           - AttributeName: type
             KeyType: RANGE
+        LocalSecondaryIndexs:
+          - IndexName: GroupCode
+            KeySchema:
+              - AttributeName: groupId
+                KeyType: HASH
+              - AttributeName: Code
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
