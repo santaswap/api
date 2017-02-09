@@ -94,7 +94,7 @@ resources:
             KeySchema:
               - AttributeName: groupId
                 KeyType: HASH
-              - AttributeName: Code
+              - AttributeName: code
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
