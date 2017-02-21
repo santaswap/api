@@ -9,7 +9,7 @@ let mapGroupsToResponse = (groups) => {
 
 let mapGroupToResponse = (group) => {
   console.log('Mapping group to response', group);
-  return new Promise( resolve => resolve({
+  return Promise.resolve({
       id: group.groupId,
       name: group.name,
       code: group.code,
@@ -17,8 +17,7 @@ let mapGroupToResponse = (group) => {
       matched: group.matched,
       pictures: group.pictures,
       users: group.users ? mapUsersToResponse(group.users) : []
-    })
-  );
+    });
 }
 
 let mapUsersToResponse = (users) => {
@@ -35,15 +34,14 @@ let mapUsersToResponse = (users) => {
 }
 
 let mapUserToResponse = (user) => {
-  return new Promise( resolve => resolve({
+  return Promise.resolve({
       groupId: user.groupId,
       id: user.userId,
       name: user.name,
       picture: user.picture,
       address: user.address,
       bio: user.bio
-    })
-  );
+    });
 };
 
 let mapGroupItemsToGroup = (groupItems) => {
@@ -53,7 +51,7 @@ let mapGroupItemsToGroup = (groupItems) => {
   if(group) {
     group.users = items.filter(item => item.type !== GROUP_TYPE);
   }
-  return new Promise( resolve => resolve(group));
+  return Promise.resolve(group);
 };
 
 let mapGroupItemsToGroups = (groupsItems) => {
@@ -62,7 +60,7 @@ let mapGroupItemsToGroups = (groupsItems) => {
   let groups = items.filter(item => item.type === GROUP_TYPE);
   let users = items.filter(item => item.type !== GROUP_TYPE);
   groups.forEach(group => group.users = users.filter(user => user.groupId === group.groupId) );
-  return new Promise( resolve => resolve(groups));
+  return Promise.resolve(groups);
 };
 
 let sendSuccess = (group, callback) => {
