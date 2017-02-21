@@ -14,7 +14,7 @@ module.exports.handler = (event, context, callback) => {
     .catch( err => helper.sendError(err, context) );
 };
 
-let getGroupFromCOde = (event) => {
+let getGroupFromCode = (event) => {
   const code = event.pathParameters.groupId;
   const params = {
     TableName: process.env.GROUPS_TABLE,
@@ -27,16 +27,15 @@ let getGroupFromCOde = (event) => {
 }
 
 let confirmValidGroupsCode = (groups) => {
-  return new Promise( (resolve, reject) => groups && groups.length === 1 ? resolve(groups) : reject('No group found'));
+  return new Promise( (resolve, reject) => groups && groups.length === 1 ? resolve(groups[0]) : reject('No group found'));
 }
 
-let mapRequestToUser = (request) => {
+let mapRequestToUser = (group, request) => {
   let timestamp = new Date().getTime();
   const body = JSON.parse(request.body);
-  const groupId = request.pathParameters.groupId;
-  console.log('Received create user request with params', body, groupId);
+  console.log('Received create user request with params', body, group.groupId);
   return Promise.resolve({
-      groupId: groupId,
+      groupId: group.groupId,
       type: helper.PROFILE_TYPE_PREFIX + body.userId,
       userId: body.userId,
       name: body.name,
