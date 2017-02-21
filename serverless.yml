@@ -96,10 +96,8 @@ resources:
         LocalSecondaryIndexes:
           - IndexName: ${self:provider.environment.GROUPS_TABLE_CODE_INDEX}
             KeySchema:
-              - AttributeName: groupId
-                KeyType: HASH
               - AttributeName: code
-                KeyType: RANGE
+                KeyType: HASH
             Projection:
               ProjectionType: ALL
         ProvisionedThroughput:
