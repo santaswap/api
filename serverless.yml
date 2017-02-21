@@ -18,7 +18,6 @@ functions:
   
   CreateAndJoin:
     handler: groups/createAndJoin.handler
-    name: ${opt:stage, self:provider.stage}-Groups-CreateAndJoin
     events:
       - http:
           path: groups
@@ -27,7 +26,6 @@ functions:
   
   Update:
     handler: groups/updateGroup.handler
-    name: ${opt:stage, self:provider.stage}-Groups-Update
     events:
       - http:
           path: groups/{groupId}
@@ -36,7 +34,6 @@ functions:
   
   ListByUser:
     handler: groups/listByUser.handler
-    name: ${opt:stage, self:provider.stage}-Groups-ListByUser
     events:
       - http:
           path: users/{userId}/groups
@@ -45,16 +42,22 @@ functions:
   
   Get:
     handler: groups/get.handler
-    name: ${opt:stage, self:provider.stage}-Groups-Get
     events:
       - http:
           path: groups/{groupId}
           method: get
           cors: true
   
+  Query:
+    handler: groups/query.handler
+    events:
+      - http:
+          path: groups
+          method: get
+          cors: true
+  
   Join:
     handler: groups/join.handler
-    name: ${opt:stage, self:provider.stage}-Groups-Join
     events:
       - http:
           path: groups/{groupId}/users
