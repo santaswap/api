@@ -6,8 +6,7 @@ const helper = require('./helper');
 module.exports.handler = (event, context, callback) => {
   getGroupItems(event)
     .then(helper.mapGroupItemsToGroups)
-    .then(helper.mapGroupToResponse)
-    .then( group => helper.sendSuccess(group, callback) )
+    .then(helper.mapGroupsToResponse)
     .catch( err => helper.sendError(err, context) );
 };
 
