@@ -93,15 +93,16 @@ resources:
             KeyType: HASH
           - AttributeName: type
             KeyType: RANGE
-        LocalSecondaryIndexes:
+        GlobalSecondaryIndexes:
           - IndexName: ${self:provider.environment.GROUPS_TABLE_CODE_INDEX}
             KeySchema:
               - AttributeName: code
                 KeyType: HASH
-              - AttributeName: groupId
-                KeyType: RANGE
             Projection:
               ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
