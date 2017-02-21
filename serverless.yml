@@ -1,4 +1,4 @@
-service: SantaSwap-Serverless
+service: santaSwap-serverless
 
 provider:
   name: aws
@@ -6,7 +6,8 @@ provider:
   stage: Local
   deploymentBucket: automation-serverlessartifact-${opt:accountId, env:ACCOUNT_ID}
   environment:
-    GROUPS_TABLE: { Ref: GroupsTable }
+    GROUPS_TABLE: { Ref: GroupsTable },
+    GROUPS_TABLE_CODE_INDEX: GroupCode
     STAGE: ${opt:stage, self:provider.stage}
   iamRoleStatements:
     - Effect: Allow
@@ -16,7 +17,7 @@ provider:
 
 functions:
   
-  CreateAndJoin:
+  createAndJoin:
     handler: groups/createAndJoin.handler
     events:
       - http:
@@ -24,7 +25,7 @@ functions:
           method: post
           cors: true
   
-  Update:
+  update:
     handler: groups/updateGroup.handler
     events:
       - http:
@@ -32,7 +33,7 @@ functions:
           method: put
           cors: true
   
-  ListByUser:
+  listByUser:
     handler: groups/listByUser.handler
     events:
       - http:
@@ -40,7 +41,7 @@ functions:
           method: get
           cors: true
   
-  Get:
+  get:
     handler: groups/get.handler
     events:
       - http:
@@ -48,7 +49,7 @@ functions:
           method: get
           cors: true
   
-  Query:
+  query:
     handler: groups/query.handler
     events:
       - http:
@@ -56,7 +57,7 @@ functions:
           method: get
           cors: true
   
-  Join:
+  join:
     handler: groups/join.handler
     events:
       - http:
@@ -93,7 +94,7 @@ resources:
           - AttributeName: type
             KeyType: RANGE
         LocalSecondaryIndexes:
-          - IndexName: GroupCode
+          - IndexName: ${self:provider.environment.GROUPS_TABLE_CODE_INDEX}
             KeySchema:
               - AttributeName: groupId
                 KeyType: HASH

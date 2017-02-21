@@ -12,13 +12,14 @@ module.exports.handler = (event, context, callback) => {
 };
 
 let getGroupItems = (event) => {
-  console.log('Getting group with event', event);
-  // const params = {
-  //   TableName: process.env.GROUPS_TABLE,
-  //   KeyConditionExpression: 'groupId = :groupId',
-  //   ExpressionAttributeValues: { ':groupId': groupId }
-  // };
-  // console.log('Getting group with params', params);
-  // return docs.query(params).promise();
-  return Promise.resolve([]);
+  console.log('Getting group with query', event.queryStringParameters);
+  const code = event.queryStringParameters.code;
+  const params = {
+    TableName: process.env.GROUPS_TABLE,
+    IndexName: process.env.GROUPS_TABLE_CODE_INDEX,
+    KeyConditionExpression: 'code = :code',
+    ExpressionAttributeValues: { ':code': code }
+  };
+  console.log('Getting group with params', params);
+  return docs.query(params).promise();
 };
