@@ -88,6 +88,8 @@ resources:
             AttributeType: S
           - AttributeName: code
             AttributeType: S
+          - AttributeName: pictures
+            AttributeType: SS
         KeySchema:
           - AttributeName: groupId
             KeyType: HASH
