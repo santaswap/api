@@ -3,7 +3,7 @@ service: santaSwap-serverless
 provider:
   name: aws
   runtime: nodejs4.3
-  stage: Local
+  stage: local
   deploymentBucket: automation-serverlessartifact-${opt:accountId, env:ACCOUNT_ID}
   environment:
     GROUPS_TABLE: { Ref: GroupsTable }
