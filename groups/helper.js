@@ -8,6 +8,7 @@ let mapGroupsToResponse = (groups) => {
 }
 
 let mapGroupToResponse = (group) => {
+  console.log('Mapping group to response', group);
   return new Promise( resolve => resolve({
       id: group.groupId,
       name: group.name,
@@ -49,7 +50,9 @@ let mapGroupItemsToGroup = (groupItems) => {
   let items = groupItems.Items;
   console.log('Mapping group items to group', items);
   let group = items.find(item => item.type === GROUP_TYPE);
-  group.users = items.filter(item => item.type !== GROUP_TYPE);
+  if(group) {
+    group.users = items.filter(item => item.type !== GROUP_TYPE);
+  }
   return new Promise( resolve => resolve(group));
 };
 
