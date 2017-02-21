@@ -1,4 +1,4 @@
-service: SantaSwap-Serverless
+service: santaSwap-serverless
 
 provider:
   name: aws
@@ -7,6 +7,7 @@ provider:
   deploymentBucket: automation-serverlessartifact-${opt:accountId, env:ACCOUNT_ID}
   environment:
     GROUPS_TABLE: { Ref: GroupsTable }
+    GROUPS_TABLE_CODE_INDEX: GroupCode
     STAGE: ${opt:stage, self:provider.stage}
   iamRoleStatements:
     - Effect: Allow
@@ -16,45 +17,48 @@ provider:
 
 functions:
   
-  CreateAndJoin:
+  createAndJoin:
     handler: groups/createAndJoin.handler
-    name: ${opt:stage, self:provider.stage}-Groups-CreateAndJoin
     events:
       - http:
           path: groups
           method: post
           cors: true
   
-  Update:
+  update:
     handler: groups/updateGroup.handler
-    name: ${opt:stage, self:provider.stage}-Groups-Update
     events:
       - http:
           path: groups/{groupId}
           method: put
           cors: true
   
-  ListByUser:
+  listByUser:
     handler: groups/listByUser.handler
-    name: ${opt:stage, self:provider.stage}-Groups-ListByUser
     events:
       - http:
           path: users/{userId}/groups
           method: get
           cors: true
   
-  Get:
+  get:
     handler: groups/get.handler
-    name: ${opt:stage, self:provider.stage}-Groups-Get
     events:
       - http:
           path: groups/{groupId}
           method: get
           cors: true
   
-  Join:
+  query:
+    handler: groups/query.handler
+    events:
+      - http:
+          path: groups
+          method: get
+          cors: true
+  
+  join:
     handler: groups/join.handler
-    name: ${opt:stage, self:provider.stage}-Groups-Join
     events:
       - http:
           path: groups/{groupId}/users
@@ -89,15 +93,16 @@ resources:
             KeyType: HASH
           - AttributeName: type
             KeyType: RANGE
-        LocalSecondaryIndexes:
-          - IndexName: GroupCode
+        GlobalSecondaryIndexes:
+          - IndexName: ${self:provider.environment.GROUPS_TABLE_CODE_INDEX}
             KeySchema:
-              - AttributeName: groupId
-                KeyType: HASH
               - AttributeName: code
-                KeyType: RANGE
+                KeyType: HASH
             Projection:
               ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
