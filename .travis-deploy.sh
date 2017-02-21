@@ -2,7 +2,8 @@
 set -e
 
 AUTHOR_NAME=$(git log -1 $TRAVIS_COMMIT --pretty="%aN")
-FIRST_NAME=${AUTHOR_NAME%% *}
+CAPITAL_FIRST_NAME=${AUTHOR_NAME%% *}
+FIRST_NAME=${CAPITAL_FIRST_NAME,,}
 echo Author is $AUTHOR_NAME, first name is $FIRST_NAME
 
 if [ $TRAVIS_PULL_REQUEST != "false" ]; then

@@ -10,5 +10,5 @@ cache:
   - directories: node_modules
     
 script:
-  - chmod +x ./travis-deploy.sh
-  - ./travis-deploy.sh
+  - chmod +x ./.travis-deploy.sh
+  - ./.travis-deploy.sh
