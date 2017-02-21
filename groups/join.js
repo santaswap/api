@@ -4,19 +4,38 @@ const docs = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 const helper = require('./helper');
 
 module.exports.handler = (event, context, callback) => {
-  mapRequestToUser(event)
+  getGroupFromCode(event)
+    .then(helper.mapGroupItemsToGroups)
+    .then(confirmValidGroupsCode)
+    .then(group => mapRequestToUser(group, event))
     .then(user => Promise.all([saveUser(user), updateGroup(user)]) )
     .then(values => helper.mapUserToResponse(values[0]) )
     .then( user => helper.sendSuccess(user, callback) )
     .catch( err => helper.sendError(err, context) );
 };
 
+let getGroupFromCOde = (event) => {
+  const code = event.pathParameters.groupId;
+  const params = {
+    TableName: process.env.GROUPS_TABLE,
+    IndexName: process.env.GROUPS_TABLE_CODE_INDEX,
+    KeyConditionExpression: 'code = :code',
+    ExpressionAttributeValues: { ':code': code }
+  };
+  console.log('Getting group with params', params);
+  return docs.query(params).promise();
+}
+
+let confirmValidGroupsCode = (groups) => {
+  return new Promise( (resolve, reject) => groups && groups.length === 1 ? resolve(groups) : reject('No group found'));
+}
+
 let mapRequestToUser = (request) => {
   let timestamp = new Date().getTime();
   const body = JSON.parse(request.body);
   const groupId = request.pathParameters.groupId;
   console.log('Received create user request with params', body, groupId);
-  return new Promise( resolve => resolve({
+  return Promise.resolve({
       groupId: groupId,
       type: helper.PROFILE_TYPE_PREFIX + body.userId,
       userId: body.userId,
@@ -24,8 +43,7 @@ let mapRequestToUser = (request) => {
       picture: body.picture,
       createdAt: timestamp,
       updatedAt: timestamp
-    })
-  );
+    });
 };
 
 let saveUser = (user) => {
