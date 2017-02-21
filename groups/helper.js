@@ -60,7 +60,6 @@ let mapGroupItemsToGroups = (groupsItems) => {
   let groups = items.filter(item => item.type === GROUP_TYPE);
   let users = items.filter(item => item.type !== GROUP_TYPE);
   groups.forEach(group => group.users = users.filter(user => user.groupId === group.groupId) );
-  console.log('Finished mapping group items to groups', groups);
   return Promise.resolve(groups);
 };
 
