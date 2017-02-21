@@ -98,6 +98,8 @@ resources:
             KeySchema:
               - AttributeName: code
                 KeyType: HASH
+              - AttributeName: groupId
+                KeyType: RANGE
             Projection:
               ProjectionType: ALL
         ProvisionedThroughput:
