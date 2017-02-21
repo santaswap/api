@@ -6,7 +6,7 @@ provider:
   stage: Local
   deploymentBucket: automation-serverlessartifact-${opt:accountId, env:ACCOUNT_ID}
   environment:
-    GROUPS_TABLE: { Ref: GroupsTable },
+    GROUPS_TABLE: { Ref: GroupsTable }
     GROUPS_TABLE_CODE_INDEX: GroupCode
     STAGE: ${opt:stage, self:provider.stage}
   iamRoleStatements:
