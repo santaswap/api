@@ -7,6 +7,7 @@ module.exports.handler = (event, context, callback) => {
   getGroupItems(event)
     .then(helper.mapGroupItemsToGroups)
     .then(helper.mapGroupsToResponse)
+    .then( groups => helper.sendSuccess(groups, callback) )
     .catch( err => helper.sendError(err, context) );
 };
 
