@@ -7,9 +7,10 @@ module.exports.handler = (event, context, callback) => {
   getGroupFromCode(event)
     .then(helper.mapGroupItemsToGroups)
     .then(confirmValidGroupsCode)
-    .then(group => mapRequestToUser(group, event))
-    .then(user => Promise.all([saveUser(user), updateGroup(user)]) )
-    .then(values => helper.mapGroupToResponse(values[1]) )
+    .then( group => mapRequestToUser(group, event))
+    .then( user => Promise.all([saveUser(user), updateGroup(user)]) )
+    .then(values => helper.mapGroupItemsToGroup(values[1]) )
+    .then(helper.mapGroupToResponse)
     .then( group => helper.sendSuccess(group, callback) )
     .catch( err => helper.sendError(err, context) );
 };
@@ -36,8 +37,8 @@ let mapRequestToUser = (group, request) => {
   console.log('Received create user request with params', body, group.groupId);
   return Promise.resolve({
       groupId: group.groupId,
-      type: helper.PROFILE_TYPE_PREFIX + body.userId,
-      userId: body.userId,
+      type: helper.PROFILE_TYPE_PREFIX + body.id,
+      userId: body.id,
       name: body.name,
       picture: body.picture,
       createdAt: timestamp,
@@ -64,10 +65,11 @@ let updateGroup = (user) => {
       type: helper.GROUP_TYPE
     },
     UpdateExpression: 'add pictures :pictures',
-    ExpressionAttributeValues: { ':pictures': docs.createSet([user.picture]) }
+    ExpressionAttributeValues: { ':pictures': docs.createSet([user.picture]) },
+    ReturnValues: 'ALL_NEW'
   };
   console.log('Updating group picture with params', params);
   return new Promise( (resolve, reject) => {
-    docs.update(params, (err, data) => err ? reject(err) : resolve(user) );
+    docs.update(params, (err, data) => err ? reject(err) : resolve(data) );
   });
 };
