@@ -70,6 +70,15 @@ let updateGroup = (user) => {
   };
   console.log('Updating group picture with params', params);
   return new Promise( (resolve, reject) => {
-    docs.update(params, (err, data) => err ? reject(err) : resolve(data) );
+    // docs.update(params, (err, data) => err ? reject(err) : resolve(data) );
+    
+    docs.update(params, (err, data) => {
+      if(err) {
+        reject(err);
+      } else {
+        console.log('Got data back from update', data);
+        resolve(data);
+      }
+    });
   });
 };
