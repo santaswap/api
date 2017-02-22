@@ -64,7 +64,7 @@ let updateGroup = (user) => {
       type: helper.GROUP_TYPE
     },
     UpdateExpression: 'add pictures :pictures',
-    ExpressionAttributeValues: { ':pictures': docs.createSet([user.picture]) }
+    ExpressionAttributeValues: { ':pictures': [user.picture] }
   };
   console.log('Updating group picture with params', params);
   return new Promise( (resolve, reject) => {
