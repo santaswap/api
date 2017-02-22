@@ -15,7 +15,7 @@ let mapGroupToResponse = (group) => {
       code: group.code,
       rules: group.rules,
       matched: group.matched,
-      pictures: group.pictures,
+      pictures: group.pictures && group.pictures.values ? group.pictures.values : [],
       users: group.users ? mapUsersToResponse(group.users) : []
     });
 }
