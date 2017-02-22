@@ -77,7 +77,7 @@ let updateGroup = (user) => {
         reject(err);
       } else {
         console.log('Got data back from update', data);
-        resolve(data);
+        resolve(data.Attributes);
       }
     });
   });
