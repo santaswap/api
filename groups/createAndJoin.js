@@ -49,7 +49,7 @@ let mapRequestAndProfileToGroup = (request, profile) => {
     name: group.name,
     code: rand().toString(),
     rules: 'Be excellent to each other',
-    pictures: [profile.picture],
+    pictures: docs.createSet([profile.picture]),
     matched: false,
     createdAt: timestamp,
     updatedAt: timestamp
