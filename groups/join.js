@@ -4,28 +4,45 @@ const docs = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 const helper = require('./helper');
 
 module.exports.handler = (event, context, callback) => {
-  mapRequestToUser(event)
-    .then(user => Promise.all([saveUser(user), updateGroup(user)]) )
-    .then(values => helper.mapUserToResponse(values[0]) )
-    .then( user => helper.sendSuccess(user, callback) )
+  getGroupFromCode(event)
+    .then(helper.mapGroupItemsToGroups)
+    .then(confirmValidGroupsCode)
+    .then( group => mapRequestToUser(group, event))
+    .then( user => Promise.all([saveUser(user), updateGroup(user)]) )
+    .then(values => helper.mapGroupToResponse(values[1]) )
+    .then( group => helper.sendSuccess(group, callback) )
     .catch( err => helper.sendError(err, context) );
 };
 
-let mapRequestToUser = (request) => {
+let getGroupFromCode = (event) => {
+  const code = event.pathParameters.groupId;
+  const params = {
+    TableName: process.env.GROUPS_TABLE,
+    IndexName: process.env.GROUPS_TABLE_CODE_INDEX,
+    KeyConditionExpression: 'code = :code',
+    ExpressionAttributeValues: { ':code': code }
+  };
+  console.log('Getting group with params', params);
+  return docs.query(params).promise();
+}
+
+let confirmValidGroupsCode = (groups) => {
+  return new Promise( (resolve, reject) => groups && groups.length === 1 ? resolve(groups[0]) : reject('No group found'));
+}
+
+let mapRequestToUser = (group, request) => {
   let timestamp = new Date().getTime();
   const body = JSON.parse(request.body);
-  const groupId = request.pathParameters.groupId;
-  console.log('Received create user request with params', body, groupId);
-  return new Promise( resolve => resolve({
-      groupId: groupId,
-      type: helper.PROFILE_TYPE_PREFIX + body.userId,
-      userId: body.userId,
+  console.log('Received create user request with params', body, group.groupId);
+  return Promise.resolve({
+      groupId: group.groupId,
+      type: helper.PROFILE_TYPE_PREFIX + body.id,
+      userId: body.id,
       name: body.name,
       picture: body.picture,
       createdAt: timestamp,
       updatedAt: timestamp
-    })
-  );
+    });
 };
 
 let saveUser = (user) => {
@@ -47,10 +64,20 @@ let updateGroup = (user) => {
       type: helper.GROUP_TYPE
     },
     UpdateExpression: 'add pictures :pictures',
-    ExpressionAttributeValues: { ':pictures': docs.createSet([user.picture]) }
+    ExpressionAttributeValues: { ':pictures': docs.createSet([user.picture]) },
+    ReturnValues: 'ALL_NEW'
   };
   console.log('Updating group picture with params', params);
   return new Promise( (resolve, reject) => {
-    docs.update(params, (err, data) => err ? reject(err) : resolve(user) );
+    // docs.update(params, (err, data) => err ? reject(err) : resolve(data) );
+    
+    docs.update(params, (err, data) => {
+      if(err) {
+        reject(err);
+      } else {
+        console.log('Got data back from update', data);
+        resolve(data.Attributes);
+      }
+    });
   });
 };

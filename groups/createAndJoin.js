@@ -29,7 +29,7 @@ let mapRequestToProfile = (request) => {
   console.log('Mapping request to user profile with params', profile);
   return Promise.resolve({
     groupId: uuid.v1(),
-    type: helper.PROFILE_TYPE_PREFIX + profile.userId,
+    type: helper.PROFILE_TYPE_PREFIX + profile.id,
     userId: profile.id,
     name: profile.name,
     picture: profile.picture,
@@ -49,7 +49,7 @@ let mapRequestAndProfileToGroup = (request, profile) => {
     name: group.name,
     code: rand().toString(),
     rules: 'Be excellent to each other',
-    pictures: [profile.picture],
+    pictures: docs.createSet([profile.picture]),
     matched: false,
     createdAt: timestamp,
     updatedAt: timestamp
