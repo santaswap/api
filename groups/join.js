@@ -9,8 +9,7 @@ module.exports.handler = (event, context, callback) => {
     .then(confirmValidGroupsCode)
     .then( group => mapRequestToUser(group, event))
     .then( user => Promise.all([saveUser(user), updateGroup(user)]) )
-    .then(values => helper.mapGroupItemsToGroup(values[1]) )
-    .then(helper.mapGroupToResponse)
+    .then(values => helper.mapGroupToResponse(values[1]) )
     .then( group => helper.sendSuccess(group, callback) )
     .catch( err => helper.sendError(err, context) );
 };
