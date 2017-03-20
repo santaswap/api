@@ -21,11 +21,11 @@ let listGroups = () => {
 };
 
 let filterGroups = (groups, event) => {
-  const userId = event.pathParameters.userId;
-  console.log('Filtering all groups by user', JSON.stringify(groups), userId);
+  const personId = event.pathParameters.personId;
+  console.log('Filtering all groups by person', JSON.stringify(groups), personId);
   return new Promise( resolve => resolve(groups.filter(group => {
-    console.log(group, group.users);
-    return group.users.some( user => user.id === userId) 
+    console.log(group, group.profiles);
+    return group.profiles.some( profile => profile.id === personId);
   })
   )
   );

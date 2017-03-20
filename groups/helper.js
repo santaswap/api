@@ -3,11 +3,11 @@
 const GROUP_TYPE = 'GROUP';
 const PROFILE_TYPE_PREFIX = 'PROFILE:';
 
-let mapGroupsToResponse = (groups) => {
+let mapGroupsToResponse = groups => {
   return Promise.all(groups.map(group => mapGroupToResponse(group) ));
 }
 
-let mapGroupToResponse = (group) => {
+let mapGroupToResponse = group => {
   console.log('Mapping group to response', group);
   return Promise.resolve({
       id: group.groupId,
@@ -16,31 +16,31 @@ let mapGroupToResponse = (group) => {
       rules: group.rules,
       matched: group.matched,
       pictures: group.pictures && group.pictures.values ? group.pictures.values : [],
-      users: group.users ? mapUsersToResponse(group.users) : []
+      profiles: group.profiles ? mapProfilesToResponse(group.profiles) : []
     });
 }
 
-let mapUsersToResponse = (users) => {
-  return users.map( user => {
+let mapProfilesToResponse = profiles => {
+  return profiles.map( profile => {
     return {
-      groupId: user.groupId,
-      id: user.userId,
-      name: user.name,
-      picture: user.picture,
-      address: user.address,
-      bio: user.bio
+      groupId: profile.groupId,
+      id: profile.profileId,
+      name: profile.name,
+      picture: profile.picture,
+      address: profile.address,
+      bio: profile.bio
     };
   });
 }
 
-let mapUserToResponse = (user) => {
+let mapProfileToResponse = profile => {
   return Promise.resolve({
-      groupId: user.groupId,
-      id: user.userId,
-      name: user.name,
-      picture: user.picture,
-      address: user.address,
-      bio: user.bio
+      groupId: profile.groupId,
+      id: profile.profileId,
+      name: profile.name,
+      picture: profile.picture,
+      address: profile.address,
+      bio: profile.bio
     });
 };
 
@@ -49,7 +49,7 @@ let mapGroupItemsToGroup = (groupItems) => {
   console.log('Mapping group items to group', items);
   let group = items.find(item => item.type === GROUP_TYPE);
   if(group) {
-    group.users = items.filter(item => item.type !== GROUP_TYPE);
+    group.profiles = items.filter(item => item.type !== GROUP_TYPE);
   }
   return Promise.resolve(group);
 };
@@ -58,8 +58,8 @@ let mapGroupItemsToGroups = (groupsItems) => {
   let items = groupsItems.Items;
   console.log('Mapping groups items to groups', items);
   let groups = items.filter(item => item.type === GROUP_TYPE);
-  let users = items.filter(item => item.type !== GROUP_TYPE);
-  groups.forEach(group => group.users = users.filter(user => user.groupId === group.groupId) );
+  let profiles = items.filter(item => item.type !== GROUP_TYPE);
+  groups.forEach(group => group.profiles = profiles.filter(profile => profile.groupId === group.groupId) );
   return Promise.resolve(groups);
 };
 
@@ -96,7 +96,7 @@ module.exports = {
     mapGroupsToResponse: mapGroupsToResponse,
     mapGroupItemsToGroup: mapGroupItemsToGroup,
     mapGroupItemsToGroups: mapGroupItemsToGroups,
-    mapUserToResponse: mapUserToResponse,
+    mapProfileToResponse: mapProfileToResponse,
     sendSuccess: sendSuccess,
     sendError: sendError
 };

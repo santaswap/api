@@ -7,8 +7,7 @@ module.exports.handler = (event, context, callback) => {
   getGroupFromCode(event)
     .then(helper.mapGroupItemsToGroups)
     .then(confirmValidGroupsCode)
-    .then( group => mapRequestToUser(group, event))
-    .then( user => Promise.all([saveUser(user), updateGroup(user)]) )
+    .then( group => mapRequestToProfile(group, event))
     .then(values => helper.mapGroupToResponse(values[1]) )
     .then( group => helper.sendSuccess(group, callback) )
     .catch( err => helper.sendError(err, context) );
@@ -30,14 +29,14 @@ let confirmValidGroupsCode = (groups) => {
   return new Promise( (resolve, reject) => groups && groups.length === 1 ? resolve(groups[0]) : reject('No group found'));
 }
 
-let mapRequestToUser = (group, request) => {
+let mapRequestToProfile = (group, request) => {
   let timestamp = new Date().getTime();
   const body = JSON.parse(request.body);
-  console.log('Received create user request with params', body, group.groupId);
+  console.log('Received create user profile request with params', body, group.groupId);
   return Promise.resolve({
       groupId: group.groupId,
       type: helper.PROFILE_TYPE_PREFIX + body.id,
-      userId: body.id,
+      profileId: body.id,
       name: body.name,
       picture: body.picture,
       createdAt: timestamp,
@@ -45,26 +44,26 @@ let mapRequestToUser = (group, request) => {
     });
 };
 
-let saveUser = (user) => {
+let saveProfile = profile => {
   const params = {
     TableName: process.env.GROUPS_TABLE,
-    Item: user
+    Item: profile
   };
-  console.log('Creating user with params', params);
+  console.log('Creating user profile with params', params);
   return new Promise( (resolve, reject) => {
-    docs.put(params, (err, data) => err ? reject(err) : resolve(user) );
+    docs.put(params, (err, data) => err ? reject(err) : resolve(profile) );
   });
 };
 
-let updateGroup = (user) => {
+let updateGroup = profile => {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Key: {
-      groupId: user.groupId,
+      groupId: profile.groupId,
       type: helper.GROUP_TYPE
     },
     UpdateExpression: 'add pictures :pictures',
-    ExpressionAttributeValues: { ':pictures': docs.createSet([user.picture]) },
+    ExpressionAttributeValues: { ':pictures': docs.createSet([profile.picture]) },
     ReturnValues: 'ALL_NEW'
   };
   console.log('Updating group picture with params', params);

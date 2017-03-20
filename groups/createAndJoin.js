@@ -30,7 +30,7 @@ let mapRequestToProfile = (request) => {
   return Promise.resolve({
     groupId: uuid.v1(),
     type: helper.PROFILE_TYPE_PREFIX + profile.id,
-    userId: profile.id,
+    profileId: profile.id,
     name: profile.name,
     picture: profile.picture,
     createdAt: timestamp,
@@ -61,7 +61,7 @@ let saveProfile = (profile) => {
     TableName: process.env.GROUPS_TABLE,
     Item: profile
   };
-  console.log('Creating user with params', params);
+  console.log('Creating user profile with params', params);
   return new Promise( (resolve, reject) => {
     docs.put(params, (err, data) => err ? reject(err) : resolve(profile) );
   });

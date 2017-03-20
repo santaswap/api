@@ -33,11 +33,11 @@ functions:
           method: put
           cors: true
   
-  listByUser:
-    handler: groups/listByUser.handler
+  listByPerson:
+    handler: groups/listByPerson.handler
     events:
       - http:
-          path: users/{userId}/groups
+          path: people/{personId}/groups
           method: get
           cors: true
   
@@ -61,16 +61,15 @@ functions:
     handler: groups/join.handler
     events:
       - http:
-          path: groups/{groupId}/users
+          path: groups/{groupId}/profiles
           method: post
           cors: true
   
-  # UpdateUser:
-  #   handler: users/update.handler
-  #   name: ${opt:stage, self:provider.stage}-Users-Update
+  # UpdateProfile:
+  #   handler: groups/updateProfile.handler
   #   events:
   #     - http:
-  #         path: users/{userId}
+  #         path: profiles/{profileId}
   #         method: put
   #         cors: true
 
