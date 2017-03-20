@@ -8,6 +8,7 @@ module.exports.handler = (event, context, callback) => {
     .then(helper.mapGroupItemsToGroups)
     .then(confirmValidGroupsCode)
     .then( group => mapRequestToProfile(group, event))
+    .then( profile => Promise.all([saveProfile(profile), updateGroup(profile)]) )
     .then(values => helper.mapGroupToResponse(values[1]) )
     .then( group => helper.sendSuccess(group, callback) )
     .catch( err => helper.sendError(err, context) );
