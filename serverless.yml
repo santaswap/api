@@ -25,7 +25,7 @@ functions:
           method: post
           cors: true
   
-  update:
+  updateGroup:
     handler: groups/updateGroup.handler
     events:
       - http:
@@ -65,13 +65,13 @@ functions:
           method: post
           cors: true
   
-  # UpdateProfile:
-  #   handler: groups/updateProfile.handler
-  #   events:
-  #     - http:
-  #         path: profiles/{profileId}
-  #         method: put
-  #         cors: true
+  updateProfile:
+    handler: groups/updateProfile.handler
+    events:
+      - http:
+          path: groups/{groupId}/profiles/{profileId}
+          method: put
+          cors: true
 
 resources:
 

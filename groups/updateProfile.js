@@ -1,81 +1,74 @@
 'use strict';
 const AWS = require('aws-sdk');
-const docs = new AWS.DynamoDB.DocumentClient({
-  apiVersion: '2012-08-10'
-});
+const docs = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
+const helper = require('./helper');
 
-module.exports.put = (event, context, callback) => {
-
-  let data = JSON.parse(event.body);
-  console.log('Updating user', data);
-
-  getUser(data)
-    .then(updateUser)
-    .then( user => {
-      console.log('Updated user', user);
-      const response = {
-        statusCode: 200,
-        headers: {
-            'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify(user)
-      };
-      callback(null, response);
-    })
-    .catch( err => {
-      console.log('Error updating user', err);
-      callback('Error');
-    });
+module.exports.handler = (event, context, callback) => {
+  mapRequestToProfile(event)
+    .then(updateProfile)
+    .then(helper.mapProfileToResponse)
+    .then( profile => helper.sendSuccess(profile, callback))
+    .catch( err => helper.sendError(err, context));
 };
 
-var getUser = (data) => {
-  return new Promise( (resolve, reject) => {
-    let timestamp = new Date().getTime();
-
-    resolve({
-      groupId: event.pathParameters.groupId,
-      userId: event.pathParameters.userId,
-      bio: data.bio,
-      address: data.address,
-      updatedAt: timestamp
-    });
+let mapRequestToProfile = request => {
+  let timestamp = new Date().getTime();
+  const profile = JSON.parse(request.body);
+  const groupId = request.pathParameters.groupId;
+  const profileId = request.pathParameters.profileId;
+  console.log('Mapping request to user profile with params', profile);
+  return Promise.resolve({
+    groupId: groupId,
+    type: helper.PROFILE_TYPE_PREFIX + profileId,
+    profileId: profileId,
+    name: profile.name,
+    picture: profile.picture,
+    address: profile.address,
+    about: profile.about,
+    wishlist: profile.wishlist,
+    updatedAt: timestamp
   });
-}
+};
 
-var updateUser = (user) => {
-
-  let expression = getExpression(user);
+var updateProfile = profile => {
+  let expression = getExpression(profile);
   var params = {
-    TableName: process.env.TABLE_NAME,
+    TableName: process.env.GROUPS_TABLE,
     Key: { 
-        userId: user.userId,
-        groupId: user.groupId
+        groupId: profile.groupId,
+        type: profile.type
     },
     UpdateExpression: expression.updateExpression,
-    ExpressionAttributeValues: expression.expressionAttributeValues
+    ExpressionAttributeValues: expression.expressionAttributeValues,
+    ReturnValues: 'ALL_NEW'
   };
-  console.log('Updating user with params', params);
+  console.log('Updating user profile with params', params);
   return new Promise( (resolve, reject) => {
-    docs.update(params, err => err ? reject(err) : resolve(user) );
+    docs.update(params, (err, updated) => err ? reject(err) : resolve(updated.Attributes) );
   });
 };
 
-var getExpression = (user) => {
+var getExpression = profile => {
   let updateExpression = 'set ';
   let expressionAttributeValues = {};
-  if(user.bio) {
-    updateExpression += 'bio = :bio';
-    expressionAttributeValues[':bio'] = user.bio; 
+  if(profile.about) {
+    updateExpression += 'about = :about';
+    expressionAttributeValues[':about'] = profile.about; 
   }
-  if(user.address) {
+  if(profile.address) {
     updateExpression ? updateExpression += ', ' : updateExpression += ' ';
     updateExpression += 'address = :address';
-    expressionAttributeValues[':address'] = user.address; 
+    expressionAttributeValues[':address'] = profile.address; 
   }
-  if(user.updatedAt) {
+  if(profile.wishlist) {
+    updateExpression ? updateExpression += ', ' : updateExpression += ' ';
+    updateExpression += 'wishlist = :wishlist';
+    expressionAttributeValues[':wishlist'] = profile.wishlist; 
+  }
+  if(profile.updatedAt) {
     updateExpression ? updateExpression += ', ' : updateExpression += ' ';
     updateExpression += 'updatedAt = :updatedAt';
-    expressionAttributeValues[':updatedAt'] = user.updatedAt; 
+    expressionAttributeValues[':updatedAt'] = profile.updatedAt; 
   }
   return {
     updateExpression: updateExpression,

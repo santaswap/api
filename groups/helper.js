@@ -28,7 +28,8 @@ let mapProfilesToResponse = profiles => {
       name: profile.name,
       picture: profile.picture,
       address: profile.address,
-      bio: profile.bio
+      about: profile.about,
+      wishlist: profile.wishlist
     };
   });
 }
@@ -40,7 +41,8 @@ let mapProfileToResponse = profile => {
       name: profile.name,
       picture: profile.picture,
       address: profile.address,
-      bio: profile.bio
+      about: profile.about,
+      wishlist: profile.wishlist
     });
 };
 
