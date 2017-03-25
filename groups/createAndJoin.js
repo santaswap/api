@@ -2,11 +2,7 @@
 const AWS = require('aws-sdk');
 const docs = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 const uuid = require('uuid');
-const rand = require('random-number').generator({
-  min: 1000,
-  max: 9999,
-  integer: true
-});
+const shortid = require('shortid');
 const helper = require('./helper');
 
 module.exports.handler = (event, context, callback) => {
@@ -47,7 +43,7 @@ let mapRequestAndProfileToGroup = (request, profile) => {
     groupId: profile.groupId,
     type: helper.GROUP_TYPE,
     name: group.name,
-    code: rand().toString(),
+    code: shortid.generate(),
     rules: 'Be excellent to each other',
     pictures: docs.createSet([profile.picture]),
     matched: false,
