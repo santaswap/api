@@ -12,7 +12,7 @@ module.exports.handler = (event, context, callback) => {
     .catch( err => helper.sendError(err, context) );
 };
 
-let listGroups = () => {
+const listGroups = () => {
   var params = {
     TableName: process.env.GROUPS_TABLE
   };
@@ -20,13 +20,11 @@ let listGroups = () => {
   return docs.scan(params).promise();
 };
 
-let filterGroups = (groups, event) => {
+const filterGroups = (groups, event) => {
   const personId = event.pathParameters.personId;
   console.log('Filtering all groups by person', JSON.stringify(groups), personId);
-  return new Promise( resolve => resolve(groups.filter(group => {
+  return Promise.resolve(groups.filter( group => {
     console.log(group, group.profiles);
     return group.profiles.some( profile => profile.id === personId);
-  })
-  )
-  );
+  }));
 }

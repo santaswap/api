@@ -2,11 +2,7 @@
 const AWS = require('aws-sdk');
 const docs = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 const uuid = require('uuid');
-const rand = require('random-number').generator({
-  min: 1000,
-  max: 9999,
-  integer: true
-});
+const shortid = require('shortid');
 const helper = require('./helper');
 
 module.exports.handler = (event, context, callback) => {
@@ -22,7 +18,7 @@ module.exports.handler = (event, context, callback) => {
     .catch( err => helper.sendError(err, context) );
 };
 
-let mapRequestToProfile = (request) => {
+const mapRequestToProfile = request => {
   let timestamp = new Date().getTime();
   const body = JSON.parse(request.body);
   const profile = body.profile;
@@ -38,7 +34,7 @@ let mapRequestToProfile = (request) => {
   });
 };
  
-let mapRequestAndProfileToGroup = (request, profile) => {
+const mapRequestAndProfileToGroup = (request, profile) => {
   let timestamp = new Date().getTime();
   const body = JSON.parse(request.body);
   let group = body.group;
@@ -47,7 +43,7 @@ let mapRequestAndProfileToGroup = (request, profile) => {
     groupId: profile.groupId,
     type: helper.GROUP_TYPE,
     name: group.name,
-    code: rand().toString(),
+    code: shortid.generate(),
     rules: 'Be excellent to each other',
     pictures: docs.createSet([profile.picture]),
     matched: false,
@@ -56,7 +52,7 @@ let mapRequestAndProfileToGroup = (request, profile) => {
   });
 };
 
-let saveProfile = (profile) => {
+const saveProfile = profile => {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Item: profile
@@ -67,7 +63,7 @@ let saveProfile = (profile) => {
   });
 };
   
-let saveGroup = (group) => {
+const saveGroup = group => {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Item: group,
@@ -78,7 +74,7 @@ let saveGroup = (group) => {
   });
 };
 
-let getGroupItems = (group) => {
+const getGroupItems = group => {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     KeyConditionExpression: 'groupId = :groupId',

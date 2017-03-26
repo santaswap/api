@@ -14,7 +14,7 @@ module.exports.handler = (event, context, callback) => {
     .catch( err => helper.sendError(err, context) );
 };
 
-let getGroupFromCode = (event) => {
+const getGroupFromCode = event => {
   const code = event.pathParameters.groupId;
   const params = {
     TableName: process.env.GROUPS_TABLE,
@@ -26,11 +26,11 @@ let getGroupFromCode = (event) => {
   return docs.query(params).promise();
 }
 
-let confirmValidGroupsCode = (groups) => {
+const confirmValidGroupsCode = (groups) => {
   return new Promise( (resolve, reject) => groups && groups.length === 1 ? resolve(groups[0]) : reject('No group found'));
 }
 
-let mapRequestToProfile = (group, request) => {
+const mapRequestToProfile = (group, request) => {
   let timestamp = new Date().getTime();
   const body = JSON.parse(request.body);
   console.log('Received create user profile request with params', body, group.groupId);
@@ -45,7 +45,7 @@ let mapRequestToProfile = (group, request) => {
     });
 };
 
-let saveProfile = profile => {
+const saveProfile = profile => {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Item: profile
@@ -56,7 +56,7 @@ let saveProfile = profile => {
   });
 };
 
-let updateGroup = profile => {
+const updateGroup = profile => {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Key: {

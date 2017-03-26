@@ -4,7 +4,8 @@
   "description": "serverless functions for santa swap",
   "license": "MIT",
   "dependencies": {
-    "random-number": "0.0.7",
+    "google-libphonenumber": "^2.0.13",
+    "shortid": "^2.2.8",
     "uuid": "^3.0.1"
   }
 }

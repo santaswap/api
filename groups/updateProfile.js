@@ -11,7 +11,7 @@ module.exports.handler = (event, context, callback) => {
     .catch( err => helper.sendError(err, context));
 };
 
-let mapRequestToProfile = request => {
+const mapRequestToProfile = request => {
   let timestamp = new Date().getTime();
   const profile = JSON.parse(request.body);
   const groupId = request.pathParameters.groupId;
@@ -30,7 +30,7 @@ let mapRequestToProfile = request => {
   });
 };
 
-var updateProfile = profile => {
+const updateProfile = profile => {
   let expression = getExpression(profile);
   var params = {
     TableName: process.env.GROUPS_TABLE,
@@ -48,7 +48,7 @@ var updateProfile = profile => {
   });
 };
 
-var getExpression = profile => {
+const getExpression = profile => {
   let updateExpression = 'set ';
   let expressionAttributeValues = {};
   if(profile.about) {
