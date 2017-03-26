@@ -13,7 +13,8 @@ provider:
     - Effect: Allow
       Action:
         - dynamodb:*
-      Resource: { Ref: GroupsTable }
+      Resource:
+        Fn::GetAtt: [ GroupsTable, Arn ]
     - Effect: Allow
       Action:
         - sns:Publish
