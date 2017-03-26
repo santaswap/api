@@ -11,7 +11,7 @@ module.exports.handler = (event, context, callback) => {
     .catch( err => helper.sendError(err, context) );
 };
 
-let getGroupItems = (event) => {
+const getGroupItems = event => {
   console.log('Getting group with query', event.queryStringParameters);
   const code = event.queryStringParameters.code;
   const params = {

@@ -3,11 +3,11 @@
 const GROUP_TYPE = 'GROUP';
 const PROFILE_TYPE_PREFIX = 'PROFILE:';
 
-let mapGroupsToResponse = groups => {
+const mapGroupsToResponse = groups => {
   return Promise.all(groups.map(group => mapGroupToResponse(group) ));
 }
 
-let mapGroupToResponse = group => {
+const mapGroupToResponse = group => {
   console.log('Mapping group to response', group);
   return Promise.resolve({
       id: group.groupId,
@@ -20,7 +20,7 @@ let mapGroupToResponse = group => {
     });
 }
 
-let mapProfilesToResponse = profiles => {
+const mapProfilesToResponse = profiles => {
   return profiles.map( profile => {
     return {
       groupId: profile.groupId,
@@ -34,7 +34,7 @@ let mapProfilesToResponse = profiles => {
   });
 }
 
-let mapProfileToResponse = profile => {
+const mapProfileToResponse = profile => {
   return Promise.resolve({
       groupId: profile.groupId,
       id: profile.profileId,
@@ -46,7 +46,7 @@ let mapProfileToResponse = profile => {
     });
 };
 
-let mapGroupItemsToGroup = (groupItems) => {
+const mapGroupItemsToGroup = groupItems => {
   let items = groupItems.Items;
   console.log('Mapping group items to group', items);
   let group = items.find(item => item.type === GROUP_TYPE);
@@ -56,7 +56,7 @@ let mapGroupItemsToGroup = (groupItems) => {
   return Promise.resolve(group);
 };
 
-let mapGroupItemsToGroups = (groupsItems) => {
+const mapGroupItemsToGroups = groupsItems => {
   let items = groupsItems.Items;
   console.log('Mapping groups items to groups', items);
   let groups = items.filter(item => item.type === GROUP_TYPE);
@@ -65,7 +65,7 @@ let mapGroupItemsToGroups = (groupsItems) => {
   return Promise.resolve(groups);
 };
 
-let sendSuccess = (group, callback) => {
+const sendSuccess = (group, callback) => {
   console.log('Replying with group', group);
   const response = {
     statusCode: 200,
@@ -78,7 +78,7 @@ let sendSuccess = (group, callback) => {
   callback(null, response);
 };
 
-let sendError = (err, context) => {
+const sendError = (err, context) => {
   console.log('Unexpected error', err);
   const response = {
     statusCode: 500,

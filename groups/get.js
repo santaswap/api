@@ -11,7 +11,7 @@ module.exports.handler = (event, context, callback) => {
     .catch( err => helper.sendError(err, context) );
 };
 
-let getGroupItems = (event) => {
+const getGroupItems = event => {
   const groupId = event.pathParameters.groupId;
   const params = {
     TableName: process.env.GROUPS_TABLE,

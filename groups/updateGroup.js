@@ -17,7 +17,7 @@ module.exports.handler = (event, context, callback) => {
     .catch( err => helper.sendError(err, context) );
 };
 
-let mapRequestToGroup = (request) => {
+const mapRequestToGroup = request => {
   let timestamp = new Date().getTime();
   const body = JSON.parse(request.body);
   const groupId = request.pathParameters.groupId;
@@ -32,7 +32,7 @@ let mapRequestToGroup = (request) => {
   );
 };
 
-let updateGroup = (group) => {
+const updateGroup = group => {
   let expression = getExpression(group);
   const params = {
     TableName: process.env.GROUPS_TABLE,
@@ -51,7 +51,7 @@ let updateGroup = (group) => {
   });
 };
 
-let getExpression = (group) => {
+const getExpression = group => {
   let updateExpression = 'set ';
   let expressionAttributeNames = {};
   let expressionAttributeValues = {};

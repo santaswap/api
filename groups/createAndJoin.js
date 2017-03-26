@@ -18,7 +18,7 @@ module.exports.handler = (event, context, callback) => {
     .catch( err => helper.sendError(err, context) );
 };
 
-let mapRequestToProfile = (request) => {
+const mapRequestToProfile = request => {
   let timestamp = new Date().getTime();
   const body = JSON.parse(request.body);
   const profile = body.profile;
@@ -34,7 +34,7 @@ let mapRequestToProfile = (request) => {
   });
 };
  
-let mapRequestAndProfileToGroup = (request, profile) => {
+const mapRequestAndProfileToGroup = (request, profile) => {
   let timestamp = new Date().getTime();
   const body = JSON.parse(request.body);
   let group = body.group;
@@ -52,7 +52,7 @@ let mapRequestAndProfileToGroup = (request, profile) => {
   });
 };
 
-let saveProfile = (profile) => {
+const saveProfile = profile => {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Item: profile
@@ -63,7 +63,7 @@ let saveProfile = (profile) => {
   });
 };
   
-let saveGroup = (group) => {
+const saveGroup = group => {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Item: group,
@@ -74,7 +74,7 @@ let saveGroup = (group) => {
   });
 };
 
-let getGroupItems = (group) => {
+const getGroupItems = group => {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     KeyConditionExpression: 'groupId = :groupId',

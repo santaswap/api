@@ -13,6 +13,10 @@ provider:
     - Effect: Allow
       Action:
         - dynamodb:*
+      Resource: { Ref: GroupsTable }
+    - Effect: Allow
+      Action:
+        - sns:Publish
       Resource: '*'
 
 functions:
@@ -62,6 +66,14 @@ functions:
     events:
       - http:
           path: groups/{groupId}/profiles
+          method: post
+          cors: true
+
+  invite:
+    handler: groups/invite.handler
+    events:
+      - http:
+          path: groups/{groupId}/invite
           method: post
           cors: true
   
