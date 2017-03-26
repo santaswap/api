@@ -16,11 +16,11 @@ module.exports.handler = (event, context, callback) => {
 
 const mapRequestToSMSParams = request => {
   const body = JSON.parse(request.body);
-  return {
+  return Promise.resolve({
     number: phoneUtil.format(phoneUtil.parse(body.number, 'US'), INTERNATIONAL_FORMAT),
     inviter: body.invitee,
     group: body.group
-  };
+  });
 };
 
 const invite = requestParams => {
