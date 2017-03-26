@@ -16,7 +16,7 @@ provider:
       Resource:
         Fn::Join:
           - ''
-          - - 'arn:aws:dynamodb'
+          - - 'arn:aws:dynamodb:'
             - { Ref: AWS::Region }
             - ':${opt:accountId, env:ACCOUNT_ID}:'
             - 'table/'
