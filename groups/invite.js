@@ -28,7 +28,7 @@ const invite = requestParams => {
     Message: `${requestParams.inviter} has invited you to their Santa Swap group - ${requestParams.group.name}!
              Join @ santaswap.io/join/${requestParams.group.code}`,
     PhoneNumber: requestParams.number
-  },
+  };
   return sns.publish(params).promise();
 };
 
@@ -36,7 +36,7 @@ const sendOptOut = requestParams => {
   const params = {
     Message: `Reply with STOP to opt out from receiving additional text messages from Santa Swap`,
     PhoneNumber: requestParams.number
-  },
+  };
   return sns.publish(params).promise();
 };
 
