@@ -18,15 +18,14 @@ const mapRequestToSMSParams = request => {
   const body = JSON.parse(request.body);
   return Promise.resolve({
     number: phoneUtil.format(phoneUtil.parse(body.number, 'US'), INTERNATIONAL_FORMAT),
-    inviter: body.invitee,
+    inviter: body.inviter,
     group: body.group
   });
 };
 
 const invite = requestParams => {
   const params = {
-    Message: `${requestParams.inviter} has invited you to their Santa Swap group - ${requestParams.group.name}!
-             Join @ santaswap.io/join/${requestParams.group.code}`,
+    Message: `${requestParams.inviter} has invited you to their ${requestParams.group.name} Santa Swap group! Join @ santaswap.io/join/${requestParams.group.code}`,
     PhoneNumber: requestParams.number
   };
   return sns.publish(params).promise();
