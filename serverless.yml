@@ -21,6 +21,7 @@ provider:
             - ':${opt:accountId, env:ACCOUNT_ID}:'
             - 'table/'
             - { Ref: GroupsTable }
+            - '*'
     - Effect: Allow
       Action:
         - sns:Publish
