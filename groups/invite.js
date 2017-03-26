@@ -7,8 +7,9 @@ const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance()
 const helper = require('./helper');
 
 module.exports.handler = (event, context, callback) => {
-  mapRequestToSMSParams(event)
-    .then(params => Promise.all([ invite(params), sendOptOut(params) ]) )
+  const requestParams = mapRequestToSMSParams(event);
+  invite(requestParams)
+    .then(response => sendOptOut(requestParams))
     .then(mapResponsesToResponse)
     .then( response => helper.sendSuccess(response, callback) )
     .catch( err => helper.sendError(err, context) );
@@ -16,16 +17,17 @@ module.exports.handler = (event, context, callback) => {
 
 const mapRequestToSMSParams = request => {
   const body = JSON.parse(request.body);
-  return Promise.resolve({
+  return {
     number: phoneUtil.format(phoneUtil.parse(body.number, 'US'), INTERNATIONAL_FORMAT),
     inviter: body.inviter,
-    group: body.group
-  });
+    group: body.group,
+    domain: body.domain
+  };
 };
 
 const invite = requestParams => {
   const params = {
-    Message: `${requestParams.inviter} has invited you to their ${requestParams.group.name} Santa Swap group! Join @ santaswap.io/join/${requestParams.group.code}`,
+    Message: `${requestParams.inviter} has invited you to the ${requestParams.group.name} Santa Swap group! Join @ ${requestParams.domain}/join/${requestParams.group.code}`,
     PhoneNumber: requestParams.number
   };
   return sns.publish(params).promise();
