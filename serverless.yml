@@ -1,4 +1,4 @@
-service: santaSwap-api
+service: santaswap-api
 
 provider:
   name: aws
