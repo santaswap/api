@@ -4,7 +4,6 @@ provider:
   name: aws
   runtime: nodejs4.3
   stage: local
-  deploymentBucket: automation-serverlessartifact-${opt:accountId, env:ACCOUNT_ID}
   environment:
     GROUPS_TABLE: { Ref: GroupsTable }
     GROUPS_TABLE_CODE_INDEX: GroupCode
@@ -17,10 +16,11 @@ provider:
         Fn::Join:
           - ''
           - - 'arn:aws:dynamodb:'
-            - { Ref: AWS::Region }
-            - ':${opt:accountId, env:ACCOUNT_ID}:'
-            - 'table/'
-            - { Ref: GroupsTable }
+            - Ref: AWS::Region
+            - ':'
+            - Ref: AWS::AccountId
+            - ':table/'
+            - Ref: GroupsTable
             - '*'
     - Effect: Allow
       Action:
