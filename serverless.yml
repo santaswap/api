@@ -14,11 +14,12 @@ provider:
         - dynamodb:*
       Resource:
         Fn::Join:
-          - ':'
-          - - 'arn:aws:dynamodb'
+          - ''
+          - - 'arn:aws:dynamodb:'
             - Ref: AWS::Region
+            - ':'
             - Ref: AWS::AccountId
-            - 'table/'
+            - ':table/'
             - Ref: GroupsTable
             - '*'
     - Effect: Allow
