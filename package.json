@@ -1,5 +1,5 @@
 {
-  "name": "santaswap-serverless",
+  "name": "santaswap-api",
   "version": "0.0.1",
   "description": "serverless functions for santa swap",
   "license": "MIT",
