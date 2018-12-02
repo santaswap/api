@@ -1,0 +1,100 @@
+# Note: YAML anchors allow an object to be re-used, reducing duplication. The ampersand
+# declares an alias for an object, then later the `<<: *alias` syntax dereferences it.
+#
+# See http://blog.daemonl.com/2016/02/yaml.html and
+# https://medium.com/@kinghuang/docker-compose-anchors-aliases-extensions-a1e4105d70bd
+# for more information about how to use anchors.
+#
+# To validate changes use an online parser, eg. http://yaml-online-parser.appspot.com/
+anchors:
+  node-container-config: &node-container-config
+    docker:
+      - image: circleci/node:10-browsers
+        environment:
+          TERM: dumb
+
+  cache-dependencies: &cache-dependencies
+    save_cache:
+      key: dependency-cache-{{ checksum "package.json" }}
+      paths:
+        - node_modules
+
+  load-dependency-cache: &load-dependency-cache
+    restore_cache:
+      key: dependency-cache-{{ checksum "package.json" }}
+
+  configure-aws-access: &configure-aws-access
+    run:
+      name: Configure AWS access
+      command: |
+        mkdir -p ~/.aws
+
+        cat > ~/.aws/credentials << EOL
+        [default]
+        aws_access_key_id = $AWS_ACCESS_KEY
+        aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
+        EOL
+
+  deploy-api: &deploy-api
+    <<: *node-container-config
+    steps:
+      - checkout
+      - *load-dependency-cache
+      - *load-build-cache
+      - *configure-aws-access
+      - run:
+          name: Deploy api
+          command: |
+            [[ ! -z "$STAGE" ]] || STAGE=$CIRCLE_BRANCH
+            echo Building site infrastructure for stage $STAGE
+            cd infrastructure && npm run deploy -- --stage $STAGE
+
+  branch-only: &branch-only
+    filters:
+      branches:
+        ignore: master
+
+  prod-only: &prod-only
+    filters:
+      branches:
+        only: master
+
+  prod-config: &prod-config
+    environment:
+      - STAGE: prod
+
+## Circle CI configuration, see https://circleci.com/docs/2.0/configuration-reference/
+version: 2
+jobs:
+  install-dependencies:
+    <<: *node-container-config
+    steps:
+      - checkout
+      - *load-dependency-cache
+      - run:
+          name: Install dependencies
+          command: npm i
+      - *cache-dependencies
+
+  deploy-api-prod:
+    <<: *deploy-api
+    <<: *prod-config
+
+  deploy-api-branch:
+    <<: *deploy-api
+
+workflows:
+  version: 2
+  pipeline:
+    jobs:
+      - install-dependencies
+      - deploy-api-branch:
+          <<: *branch-only
+          context: santaswap-aws
+          requires:
+            - install-dependencies
+      - deploy-api-prod:
+          <<: *prod-only
+          context: santaswap-aws
+          requires:
+            - install-dependencies

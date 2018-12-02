@@ -1,0 +1,135 @@
+service: santaswap-api
+
+provider:
+  name: aws
+  runtime: nodejs4.3
+  stage: local
+  environment:
+    GROUPS_TABLE: { Ref: GroupsTable }
+    GROUPS_TABLE_CODE_INDEX: GroupCode
+    STAGE: ${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource:
+        Fn::Join:
+          - ''
+          - - 'arn:aws:dynamodb:'
+            - Ref: AWS::Region
+            - ':'
+            - Ref: AWS::AccountId
+            - ':table/'
+            - Ref: GroupsTable
+            - '*'
+    - Effect: Allow
+      Action:
+        - sns:Publish
+      Resource: '*'
+
+functions:
+  
+  createAndJoin:
+    handler: groups/createAndJoin.handler
+    events:
+      - http:
+          path: groups
+          method: post
+          cors: true
+  
+  updateGroup:
+    handler: groups/updateGroup.handler
+    events:
+      - http:
+          path: groups/{groupId}
+          method: put
+          cors: true
+  
+  listByPerson:
+    handler: groups/listByPerson.handler
+    events:
+      - http:
+          path: people/{personId}/groups
+          method: get
+          cors: true
+  
+  get:
+    handler: groups/get.handler
+    events:
+      - http:
+          path: groups/{groupId}
+          method: get
+          cors: true
+  
+  query:
+    handler: groups/query.handler
+    events:
+      - http:
+          path: groups
+          method: get
+          cors: true
+  
+  join:
+    handler: groups/join.handler
+    events:
+      - http:
+          path: groups/{groupId}/profiles
+          method: post
+          cors: true
+
+  invite:
+    handler: groups/invite.handler
+    events:
+      - http:
+          path: groups/{groupId}/invite
+          method: post
+          cors: true
+  
+  updateProfile:
+    handler: groups/updateProfile.handler
+    events:
+      - http:
+          path: groups/{groupId}/profiles/{profileId}
+          method: put
+          cors: true
+
+resources:
+
+  Resources:
+
+    GroupsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: groupId
+            AttributeType: S
+          - AttributeName: type
+            AttributeType: S
+          - AttributeName: code
+            AttributeType: S
+        KeySchema:
+          - AttributeName: groupId
+            KeyType: HASH
+          - AttributeName: type
+            KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: ${self:provider.environment.GROUPS_TABLE_CODE_INDEX}
+            KeySchema:
+              - AttributeName: code
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+  Outputs:
+
+    GroupsTable:
+      Description: Name of the Groups table for the ${opt:stage, self:provider.stage} stage
+      Value: { Ref: GroupsTable }
+      Export:
+        Name: ${opt:stage, self:provider.stage}-GroupsTable
