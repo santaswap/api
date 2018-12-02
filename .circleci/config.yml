@@ -40,7 +40,6 @@ anchors:
     steps:
       - checkout
       - *load-dependency-cache
-      - *load-build-cache
       - *configure-aws-access
       - run:
           name: Deploy api
