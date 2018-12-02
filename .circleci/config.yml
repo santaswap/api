@@ -45,8 +45,8 @@ anchors:
           name: Deploy api
           command: |
             [[ ! -z "$STAGE" ]] || STAGE=$CIRCLE_BRANCH
-            echo Building site infrastructure for stage $STAGE
-            cd infrastructure && npm run deploy -- --stage $STAGE
+            echo Deploying API for stage $STAGE
+            npm run deploy -- --stage $STAGE
 
   branch-only: &branch-only
     filters:
