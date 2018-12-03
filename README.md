@@ -3,17 +3,9 @@
   <img height="150" src="https://user-images.githubusercontent.com/2955468/48448638-4d561380-e765-11e8-9ee4-81d9556eda48.png">
 </p>
 
-[![Build status][build-badge]][build-badge-url]
+[![Build status][build-badge]][build-badge-url] [![Known Vulnerabilities][vulnerability-badge]][vulnerability-badge-url] [![Dependency Status][dependency-badge]][dependency-badge-url] [![devDependency Status][dev-dependency-badge]][dev-dependency-badge-url] [![License][license-badge]][license-badge-url] [![Code style][formatter-badge]][formatter-badge-url]
 
-[![Known Vulnerabilities][vulnerability-badge]][vulnerability-badge-url]
-
-[![Dependency Status][dependency-badge]][dependency-badge-url]
-
-[![devDependency Status][dev-dependency-badge]][dev-dependency-badge-url]
-
-[![License][license-badge]][license-badge-url]
-
-[![Code style][formatter-badge]][formatter-badge-url]
+# Santa Swap API
 
 [build-badge]: https://circleci.com/gh/santaswap/api.svg?style=shield&circle-token=8fe498e3f3a9afad454abe589e6046906ebdb56e
 [build-badge-url]: https://circleci.com/gh/santaswap/api
