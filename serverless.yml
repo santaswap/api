@@ -11,7 +11,7 @@ provider:
   iamRoleStatements:
     - Effect: Allow
       Action: 'dynamodb:*'
-      Resource: { Fn::GetAtt [ GroupsTable, Arn ] }
+      Resource: { Fn::GetAtt: [GroupsTable, Arn] }
   environment:
     IOPIPE_TOKEN: ${env:IOPIPE_TOKEN}
     IOPIPE_LOGGER_ENABLED: true
