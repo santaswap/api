@@ -8,9 +8,14 @@ plugins:
 provider:
   name: aws
   runtime: nodejs8.10
+  iamRoleStatements:
+    - Effect: Allow
+      Action: 'dynamodb:*'
+      Resource: { Fn::GetAtt [ GroupsTable, Arn ] }
   environment:
     IOPIPE_TOKEN: ${env:IOPIPE_TOKEN}
     IOPIPE_LOGGER_ENABLED: true
+    GROUPS_TABLE: { Ref: GroupsTable }
 
 functions:
   hello:
@@ -19,3 +24,20 @@ functions:
       - http:
           method: get
           path: hello
+
+resources:
+  Resources:
+    GroupsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: groupId
+            AttributeType: S
+          - AttributeName: type
+            AttributeType: S
+        BillingMode: PAY_PER_REQUEST
+        KeySchema:
+          - AttributeName: groupId
+            KeyType: HASH
+          - AttributeName: type
+            KeyType: RANGE
