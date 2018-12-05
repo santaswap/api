@@ -5,8 +5,8 @@ export class Group {
   type: string = 'GROUP';
   name: string;
 
-  constructor(name: string) {
+  constructor(body: any) {
     this.groupId = v1();
-    this.name = name;
+    this.name = body.name;
   }
 }

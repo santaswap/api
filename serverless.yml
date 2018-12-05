@@ -9,29 +9,85 @@ plugins:
 provider:
   name: aws
   runtime: nodejs8.10
+  profile: personal
   iamRoleStatements:
     - Effect: Allow
       Action:
         - dynamodb:GetItem
         - dynamodb:PutItem
         - dynamodb:DeleteItem
-      Resource: { Fn::GetAtt: [GroupsTable, Arn] }
+      Resource:
+        - { Fn::GetAtt: [GroupsTable, Arn] }
+        - { Fn::GetAtt: [UsersTable, Arn] }
+        - { Fn::GetAtt: [InvitationsTable, Arn] }
   environment:
     IOPIPE_TOKEN: ${env:IOPIPE_TOKEN}
     IOPIPE_LOGGER_ENABLED: true
     GROUPS_TABLE: { Ref: GroupsTable }
+    USERS_TABLE: { Ref: UsersTable }
+    INVITATIONS_TABLE: { Ref: InvitationsTable }
 
 functions:
-  createGroup:
-    handler: groups/create.handler
+  createAndJoinGroup:
+    handler: groups/create-and-join.handler
     events:
       - http:
           method: post
-          path: groups
+          path: users/{userId}/groups
+          cors: true
+          request:
+            parameters:
+              paths:
+                userId: true
+
+  getGroupsByUser:
+    handler: groups/getByUser.handler
+    events:
+      - http:
+          method: get
+          path: users/{userId}/groups
+          cors: true
+          request:
+            parameters:
+              paths:
+                userId: true
+
+  createUser:
+    handler: users/create.handler
+    events:
+      - http:
+          method: post
+          path: users
           cors: true
 
 resources:
   Resources:
+    InvitationsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: groupId
+            AttributeType: S
+          - AttributeName: invitationId
+            AttributeType: S
+        BillingMode: PAY_PER_REQUEST
+        KeySchema:
+          - AttributeName: groupId
+            KeyType: HASH
+          - AttributeName: invitationId
+            KeyType: RANGE
+
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+        BillingMode: PAY_PER_REQUEST
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+
     GroupsTable:
       Type: AWS::DynamoDB::Table
       Properties:
