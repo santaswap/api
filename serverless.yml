@@ -22,12 +22,13 @@ provider:
     GROUPS_TABLE: { Ref: GroupsTable }
 
 functions:
-  hello:
-    handler: handler.hello
+  createGroup:
+    handler: groups/create.handler
     events:
       - http:
           method: get
           path: hello
+          cors: true
 
 resources:
   Resources:
