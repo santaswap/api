@@ -26,8 +26,8 @@ functions:
     handler: groups/create.handler
     events:
       - http:
-          method: get
-          path: hello
+          method: post
+          path: groups
           cors: true
 
 resources:
