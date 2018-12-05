@@ -4,13 +4,17 @@ service:
 plugins:
   - serverless-plugin-iopipe
   - serverless-webpack
+  - serverless-plugin-iam-checker
 
 provider:
   name: aws
   runtime: nodejs8.10
   iamRoleStatements:
     - Effect: Allow
-      Action: 'dynamodb:*'
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
       Resource: { Fn::GetAtt: [GroupsTable, Arn] }
   environment:
     IOPIPE_TOKEN: ${env:IOPIPE_TOKEN}
