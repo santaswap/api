@@ -1,8 +1,7 @@
 {
   "name": "santaswap-api",
-  "version": "1.0.0",
-  "description": "Serverless webpack example using Typescript",
-  "main": "handler.js",
+  "description": "API for the Santa Swap website",
+  "license": "MIT",
   "scripts": {
     "deploy": "sls deploy"
   },
@@ -23,5 +22,14 @@
     "typescript": "^2.9.2",
     "webpack": "^4.5.0"
   },
-  "license": "MIT"
+  "iopipe": {
+    "plugins": [
+      [
+        "@iopipe/logger",
+        {
+          "enabled": true
+        }
+      ]
+    ]
+  }
 }

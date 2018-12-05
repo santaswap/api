@@ -4,9 +4,10 @@ import { Group } from './group';
 
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
-export const handler = apiWrapper(async ({ event, success, error }: ApiSignature) => {
+export const handler = apiWrapper(async ({ body, success, error }: ApiSignature) => {
   try {
-    const groupToSave = new Group('new group');
+    const { name } = body;
+    const groupToSave = new Group(name);
     const group = await save(groupToSave);
     success(group);
   } catch (err) {
