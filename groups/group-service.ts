@@ -16,8 +16,10 @@ export async function createAndJoinGroup(group: Group, userId: string) {
 export async function getGroupsByUser(userId: string) {
   const params = {
     TableName: process.env.GROUPS_TABLE,
-    KeyConditionExpression: '',
-    ExpressionAttributeValues: {}
+    IndexName: process.env.GROUPS_TABLE_TYPES_INDEX,
+    KeyConditionExpression: '#type = :type',
+    ExpressionAttributeNames: { '#type': 'type' },
+    ExpressionAttributeValues: { ':type': `USER:${userId}` }
   };
   console.log('Getting all groups by user with params', params);
   return groups

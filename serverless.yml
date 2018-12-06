@@ -13,6 +13,7 @@ provider:
   iamRoleStatements:
     - Effect: Allow
       Action:
+        - dynamodb:Query
         - dynamodb:GetItem
         - dynamodb:PutItem
         - dynamodb:DeleteItem
@@ -24,6 +25,7 @@ provider:
     IOPIPE_TOKEN: ${env:IOPIPE_TOKEN}
     IOPIPE_LOGGER_ENABLED: true
     GROUPS_TABLE: { Ref: GroupsTable }
+    GROUPS_TABLE_TYPE_INDEX: TypeIndex
     USERS_TABLE: { Ref: UsersTable }
     INVITATIONS_TABLE: { Ref: InvitationsTable }
 
@@ -102,3 +104,12 @@ resources:
             KeyType: HASH
           - AttributeName: type
             KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: TypeIndex
+            KeySchema:
+              - AttributeName: type
+                KeyType: HASH
+              - AttributeName: groupId
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
