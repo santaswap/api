@@ -17,8 +17,10 @@ provider:
         - dynamodb:GetItem
         - dynamodb:PutItem
         - dynamodb:DeleteItem
+        - dynamodb:BatchGetItem
       Resource:
         - { Fn::GetAtt: [GroupsTable, Arn] }
+        - { Fn::Join: ['', [{ Fn::GetAtt: [GroupsTable, Arn] }, '/index/*']] }
         - { Fn::GetAtt: [UsersTable, Arn] }
         - { Fn::GetAtt: [InvitationsTable, Arn] }
   environment:
@@ -41,6 +43,19 @@ functions:
             parameters:
               paths:
                 userId: true
+
+  joinGroup:
+    handler: groups/join.handler
+    events:
+      - http:
+          method: post
+          path: groups/{groupId}/users/{userId}
+          cors: true
+          request:
+            parameters:
+              paths:
+                userId: true
+                groupId: true
 
   getGroupsByUser:
     handler: groups/getByUser.handler
@@ -109,7 +124,5 @@ resources:
             KeySchema:
               - AttributeName: type
                 KeyType: HASH
-              - AttributeName: groupId
-                KeyType: RANGE
             Projection:
               ProjectionType: ALL
