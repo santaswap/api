@@ -18,6 +18,7 @@ provider:
         - dynamodb:PutItem
         - dynamodb:DeleteItem
         - dynamodb:BatchGetItem
+        - dynamodb:UpdateItem
       Resource:
         - { Fn::GetAtt: [GroupsTable, Arn] }
         - { Fn::Join: ['', [{ Fn::GetAtt: [GroupsTable, Arn] }, '/index/*']] }
@@ -56,6 +57,20 @@ functions:
               paths:
                 userId: true
                 groupId: true
+
+  excludeUser:
+    handler: groups/exclude-user.handler
+    events:
+      - http:
+          method: post
+          path: groups/{groupId}/users/{userId}/excludedUsers/{excludedUserId}
+          cors: true
+          request:
+            parameters:
+              paths:
+                userId: true
+                groupId: true
+                excludedUserId: true
 
   getGroupsByUser:
     handler: groups/getByUser.handler
