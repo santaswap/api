@@ -5,6 +5,7 @@ plugins:
   - serverless-plugin-iopipe
   - serverless-webpack
   - serverless-plugin-iam-checker
+  - serverless-domain-manager
 
 provider:
   name: aws
@@ -31,6 +32,20 @@ provider:
     GROUPS_TABLE_TYPE_INDEX: TypeIndex
     USERS_TABLE: { Ref: UsersTable }
     INVITATIONS_TABLE: { Ref: InvitationsTable }
+
+custom:
+  stageProperties:
+    default:
+      enabled: false
+      basePath: ${self:provider.stage}
+    prod:
+      enabled: true
+      basePath: ''
+  customDomain:
+    basePath: ${self:custom.stageProperties.${opt:stage, self:provider.stage}.basePath, self:custom.stageProperties.default.basePath}
+    domainName: api.santaswap.io
+    certificateName: '*.santaswap.io'
+    enabled: ${self:custom.stageProperties.${opt:stage, self:provider.stage}.enabled, self:custom.stageProperties.default.enabled}
 
 functions:
   createAndJoinGroup:
