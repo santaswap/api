@@ -44,7 +44,7 @@ custom:
   customDomain:
     basePath: ${self:custom.stageProperties.${opt:stage, self:provider.stage}.basePath, self:custom.stageProperties.default.basePath}
     domainName: api.santaswap.io
-    certificateName: '*.santaswap.io'
+    certificateName: api.santaswap.io
     enabled: ${self:custom.stageProperties.${opt:stage, self:provider.stage}.enabled, self:custom.stageProperties.default.enabled}
 
 functions:
