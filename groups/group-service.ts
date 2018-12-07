@@ -4,6 +4,7 @@ import { UserProfile } from './user-profile';
 import { getUser } from '../users';
 
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
+const converter = DynamoDB.Converter;
 
 export async function createAndJoinGroup(group: Group, userId: string): Promise<any> {
   await saveGroup(group);
@@ -24,9 +25,9 @@ export async function joinGroup(groupId: string, userId: string): Promise<any> {
 export async function getGroupsByUser(userId: string): Promise<any> {
   const userProfiles = await getUserProfiles(userId);
   console.log('Found user profiles', userProfiles);
-  const groups = await getGroups(userProfiles);
+  const [...groups] = await Promise.all(userProfiles.map(up => getGroupAndMembers(up.groupId)));
   console.log('Found groups', groups);
-  return { groups, userProfiles };
+  return { groups };
 }
 
 export async function excludeUser(groupId: string, userId: string, excludedUserId: string): Promise<any> {
@@ -55,6 +56,27 @@ function getGroup(groupId: string): Promise<Group> {
     .get(params)
     .promise()
     .then(res => <Group>res.Item);
+}
+
+function getGroupAndMembers(groupId: string): Promise<any> {
+  const params = {
+    TableName: process.env.GROUPS_TABLE,
+    KeyConditionExpression: '#groupId = :groupId',
+    ExpressionAttributeNames: { '#groupId': 'groupId' },
+    ExpressionAttributeValues: { ':groupId': `${groupId}` }
+  };
+  console.log('Getting group and members with params', params);
+  let group;
+  return groups
+    .query(params)
+    .promise()
+    .then(res => res.Items)
+    .then(items => {
+      group = items.find(item => item.type.indexOf('GROUP') > -1);
+      group.members = [];
+      items.filter(item => item.type.indexOf('USER') > -1).forEach(user => group.members.push(user));
+    })
+    .then(() => group);
 }
 
 function getGroups(userProfiles: UserProfile[]): Promise<Group[]> {
