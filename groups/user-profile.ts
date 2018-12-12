@@ -4,6 +4,7 @@ import { Group } from './group';
 export class UserProfile {
   groupId: string;
   type: string = 'USER:';
+  userId: string;
   name: string;
   address: string;
   giftIdeas: string;

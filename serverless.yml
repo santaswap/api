@@ -87,8 +87,8 @@ functions:
                 groupId: true
                 excludedUserId: true
 
-  getGroupsByUser:
-    handler: groups/getByUser.handler
+  getAllGroupsByUser:
+    handler: groups/getAllByUser.handler
     events:
       - http:
           method: get
@@ -98,6 +98,19 @@ functions:
             parameters:
               paths:
                 userId: true
+
+  getGroupDetailsByUser:
+    handler: groups/getDetailedByUser.handler
+    events:
+      - http:
+          method: get
+          path: users/{userId}/groups/{groupId}
+          cors: true
+          request:
+            parameters:
+              paths:
+                userId: true
+                groupId: true
 
   createUser:
     handler: users/create.handler

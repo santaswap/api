@@ -1,5 +1,5 @@
 import { DynamoDB } from 'aws-sdk';
-import { Group } from './group';
+import { Group, BasicGroupResponse, DetailedGroupResponse } from './group';
 import { UserProfile } from './user-profile';
 import { getUser } from '../users';
 
@@ -22,15 +22,54 @@ export async function joinGroup(groupId: string, userId: string): Promise<any> {
   return { group, user, userProfile };
 }
 
-export async function getGroupsByUser(userId: string): Promise<any> {
+export async function getAllGroupsByUser(userId: string): Promise<any> {
   const userProfiles = await getUserProfiles(userId);
   console.log('Found user profiles', userProfiles);
   const [...groups] = await Promise.all(userProfiles.map(up => getGroupAndMembers(up.groupId)));
   console.log('Found groups', groups);
-  return { groups };
+  return groups;
 }
 
-export async function excludeUser(groupId: string, userId: string, excludedUserId: string): Promise<any> {
+export async function getDetailedGroupByUser(userId: string, groupId: string): Promise<any> {
+  const params = {
+    TableName: process.env.GROUPS_TABLE,
+    KeyConditionExpression: '#groupId = :groupId',
+    ExpressionAttributeNames: { '#groupId': 'groupId' },
+    ExpressionAttributeValues: { ':groupId': `${groupId}` }
+  };
+  console.log('Getting group detail and members with params', params);
+  let group: Group;
+  let members: UserProfile[] = [];
+  let userProfile: UserProfile;
+  return groups
+    .query(params)
+    .promise()
+    .then(res => res.Items)
+    .then(items => {
+      group = <Group>items.find(item => item.type.indexOf('GROUP') > -1);
+      delete group.type;
+      items
+        .filter(item => item.type && item.type.indexOf('USER') > -1)
+        .forEach(user => {
+          console.log('Seeing if user profile is of user or member', user);
+          delete user.groupId;
+          user.userId = user.type.split('USER:')[1];
+          delete user.type;
+          if (user.userId !== `${userId}`) {
+            delete user.excludedUserIds;
+            console.log('Found a member', user);
+            members.push(<UserProfile>user);
+          } else {
+            user.excludedUserIds = user.excludedUserIds ? user.excludedUserIds.values : [];
+            console.log('Found the user', user);
+            userProfile = <UserProfile>user;
+          }
+        });
+    })
+    .then(() => new DetailedGroupResponse(group, members, userProfile));
+}
+
+export async function excludeUser(groupId: string, userId: string, excludedUserId: string): Promise<UserProfile> {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Key: { groupId, type: `USER:${userId}` },
@@ -43,7 +82,11 @@ export async function excludeUser(groupId: string, userId: string, excludedUserI
   return groups
     .update(params)
     .promise()
-    .then(res => res.Attributes);
+    .then(res => res.Attributes)
+    .then(user => {
+      user.excludedUserIds = user.excludedUserIds ? user.excludedUserIds.values : [];
+      return <UserProfile>user;
+    });
 }
 
 function getGroup(groupId: string): Promise<Group> {
@@ -66,15 +109,20 @@ function getGroupAndMembers(groupId: string): Promise<any> {
     ExpressionAttributeValues: { ':groupId': `${groupId}` }
   };
   console.log('Getting group and members with params', params);
-  let group;
+  let group: BasicGroupResponse;
   return groups
     .query(params)
     .promise()
     .then(res => res.Items)
     .then(items => {
-      group = items.find(item => item.type.indexOf('GROUP') > -1);
+      group = <BasicGroupResponse>items.find(item => item.type.indexOf('GROUP') > -1);
+      delete group.type;
       group.members = [];
-      items.filter(item => item.type.indexOf('USER') > -1).forEach(user => group.members.push(user));
+      items
+        .filter(item => item.type && item.type.indexOf('USER') > -1)
+        .forEach(user => {
+          group.members.push(user.name);
+        });
     })
     .then(() => group);
 }
@@ -105,7 +153,13 @@ function getUserProfiles(userId: string): Promise<UserProfile[]> {
   return groups
     .query(params)
     .promise()
-    .then(res => <UserProfile[]>res.Items);
+    .then(res => res.Items)
+    .then(items =>
+      items.map(item => {
+        item.excludedUserIds = item.excludedUserIds ? item.excludedUserIds.values : [];
+        return <UserProfile>item;
+      })
+    );
 }
 
 function saveGroup(group: Group): Promise<Group> {
