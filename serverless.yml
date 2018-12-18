@@ -73,6 +73,19 @@ functions:
                 userId: true
                 groupId: true
 
+  updateProfile:
+    handler: groups/updateProfile.handler
+    events:
+      - http:
+          method: post
+          path: groups/{groupId}/users/{userId}/profile
+          cors: true
+          request:
+            parameters:
+              paths:
+                userId: true
+                groupId: true
+
   excludeUser:
     handler: groups/exclude-user.handler
     events:
