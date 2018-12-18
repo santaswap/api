@@ -27,7 +27,7 @@ export class CreateUserProfileRequest implements UserProfile {
 
 export class UpdateUserProfileRequest implements UserProfile {
   groupId: string;
-  type: string = 'User:';
+  type: string = 'USER:';
   userId: string;
   name: string;
   address: string;
