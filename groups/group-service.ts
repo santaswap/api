@@ -91,11 +91,10 @@ export async function excludeUser(groupId: string, userId: string, excludedUserI
 export async function updateProfile(updateUserProfileRequest: UpdateUserProfileRequest): Promise<UpdateUserProfileRequest> {
   const params = {
     TableName: process.env.GROUPS_TABLE,
-    Key: { groupId: updateUserProfileRequest.groupId, type: updateUserProfileRequest.type },
     Item: updateUserProfileRequest
   };
   console.log('Updating user profile with params', params);
-  return groups.update(params).promise().then(res => updateUserProfileRequest)
+  return groups.put(params).promise().then(res => updateUserProfileRequest)
 }
 
 function getGroup(groupId: string): Promise<GroupRecord> {
