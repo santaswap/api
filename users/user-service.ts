@@ -1,9 +1,9 @@
 import { DynamoDB } from 'aws-sdk';
-import { User } from './user';
+import { CreateUserRequest, UserRecord } from './user';
 
 const users = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
-export function saveUser(user: User) {
+export function saveUser(user: CreateUserRequest): Promise<CreateUserRequest> {
   const params = {
     TableName: process.env.USERS_TABLE,
     Item: user
@@ -15,7 +15,7 @@ export function saveUser(user: User) {
     .then(res => user);
 }
 
-export function getUser(userId: string): Promise<User> {
+export function getUser(userId: string): Promise<UserRecord> {
   const params = {
     TableName: process.env.USERS_TABLE,
     Key: { userId }
@@ -24,5 +24,5 @@ export function getUser(userId: string): Promise<User> {
   return users
     .get(params)
     .promise()
-    .then(res => <User>res.Item);
+    .then(res => <UserRecord>res.Item);
 }

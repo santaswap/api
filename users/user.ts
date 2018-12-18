@@ -1,6 +1,11 @@
 import { v1 } from 'uuid';
 
-export class User {
+export interface User {
+  userId: string;
+  name: string;
+}
+
+export class CreateUserRequest implements User {
   userId: string;
   name: string;
 
@@ -8,4 +13,9 @@ export class User {
     this.userId = v1();
     this.name = name;
   }
+}
+
+export class UserRecord implements User {
+  userId: string;
+  name: string;
 }

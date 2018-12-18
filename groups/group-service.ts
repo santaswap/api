@@ -4,7 +4,6 @@ import { CreateUserProfileRequest, UserProfileResponse } from './user-profile';
 import { getUser } from '../users';
 
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
-const converter = DynamoDB.Converter;
 
 export async function createAndJoinGroup(group: CreateGroupRequest, userId: string): Promise<any> {
   await saveGroup(group);
