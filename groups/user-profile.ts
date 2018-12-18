@@ -25,6 +25,32 @@ export class CreateUserProfileRequest implements UserProfile {
   }
 }
 
+export class UpdateUserProfileRequest implements UserProfile {
+  groupId: string;
+  type: string = 'User:';
+  userId: string;
+  name: string;
+  address: string;
+  giftIdeas: string;
+
+  constructor({ groupId, userId, name, address, giftIdeas }: UpdateUserProfileRequestConstructor) {
+    this.groupId = groupId;
+    this.name = name;
+    this.userId = userId;
+    this.type += userId;
+    this.address = address;
+    this.giftIdeas = giftIdeas;
+  }
+}
+
+interface UpdateUserProfileRequestConstructor {
+  groupId: string;
+  userId: string;
+  name: string;
+  address: string;
+  giftIdeas: string;
+}
+
 export class UserProfileResponse implements UserProfile {
   groupId: string;
   userId: string;

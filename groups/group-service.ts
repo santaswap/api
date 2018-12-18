@@ -1,6 +1,6 @@
 import { DynamoDB } from 'aws-sdk';
 import { GroupRecord, CreateGroupRequest, BasicGroupResponse, DetailedGroupResponse } from './group';
-import { CreateUserProfileRequest, UserProfileResponse } from './user-profile';
+import { CreateUserProfileRequest, UserProfileResponse, UpdateUserProfileRequest } from './user-profile';
 import { getUser } from '../users';
 
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
@@ -86,6 +86,16 @@ export async function excludeUser(groupId: string, userId: string, excludedUserI
       user.excludedUserIds = user.excludedUserIds ? user.excludedUserIds.values : [];
       return <UserProfileResponse>user;
     });
+}
+
+export async function updateProfile(updateUserProfileRequest: UpdateUserProfileRequest): Promise<UpdateUserProfileRequest> {
+  const params = {
+    TableName: process.env.GROUPS_TABLE,
+    Key: { groupId: updateUserProfileRequest.groupId, type: updateUserProfileRequest.type },
+    Item: updateUserProfileRequest
+  };
+  console.log('Updating user profile with params', params);
+  return groups.update(params).promise().then(res => updateUserProfileRequest)
 }
 
 function getGroup(groupId: string): Promise<GroupRecord> {
