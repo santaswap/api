@@ -1,7 +1,12 @@
 import { v1 } from 'uuid';
-import { UserProfile } from './user-profile';
+import { UserProfileResponse } from './user-profile';
 
-export class Group {
+export interface Group {
+  groupId: string;
+  name: string;
+}
+
+export class CreateGroupRequest implements Group {
   groupId: string;
   type: string = 'GROUP:';
   name: string;
@@ -13,27 +18,31 @@ export class Group {
   }
 }
 
-export class BasicGroupResponse {
+export interface GroupRecord extends Group {
   groupId: string;
+  name: string;
   type: string;
+}
+
+export class BasicGroupResponse implements Group {
+  groupId: string;
   name: string;
   members: string[];
 
-  constructor(group: Group, userProfiles: UserProfile[]) {
+  constructor(group: Group, userProfiles: UserProfileResponse[]) {
     this.groupId = group.groupId;
-    this.type = group.type;
     this.name = group.name;
     this.members = userProfiles.map(userProfile => userProfile.name);
   }
 }
 
-export class DetailedGroupResponse {
+export class DetailedGroupResponse implements Group {
   groupId: string;
   name: string;
-  members: UserProfile[];
-  userProfile: UserProfile;
+  members: UserProfileResponse[];
+  userProfile: UserProfileResponse;
 
-  constructor(group: Group, userProfiles: UserProfile[], userProfile: UserProfile) {
+  constructor(group: Group, userProfiles: UserProfileResponse[], userProfile: UserProfileResponse) {
     this.groupId = group.groupId;
     this.name = group.name;
     this.userProfile = userProfile;

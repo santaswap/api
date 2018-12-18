@@ -1,15 +1,15 @@
 import { DynamoDB } from 'aws-sdk';
-import { Group, BasicGroupResponse, DetailedGroupResponse } from './group';
-import { UserProfile } from './user-profile';
+import { GroupRecord, CreateGroupRequest, BasicGroupResponse, DetailedGroupResponse } from './group';
+import { CreateUserProfileRequest, UserProfileResponse } from './user-profile';
 import { getUser } from '../users';
 
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 const converter = DynamoDB.Converter;
 
-export async function createAndJoinGroup(group: Group, userId: string): Promise<any> {
+export async function createAndJoinGroup(group: CreateGroupRequest, userId: string): Promise<any> {
   await saveGroup(group);
   const user = await getUser(userId);
-  const userProfile = new UserProfile(group, user);
+  const userProfile = new CreateUserProfileRequest(group, user);
   await saveUserProfile(userProfile);
   return { group, user, userProfile };
 }
@@ -17,7 +17,7 @@ export async function createAndJoinGroup(group: Group, userId: string): Promise<
 export async function joinGroup(groupId: string, userId: string): Promise<any> {
   const user = await getUser(userId);
   const group = await getGroup(groupId);
-  const userProfile = new UserProfile(group, user);
+  const userProfile = new CreateUserProfileRequest(group, user);
   await saveUserProfile(userProfile);
   return { group, user, userProfile };
 }
@@ -38,15 +38,15 @@ export async function getDetailedGroupByUser(userId: string, groupId: string): P
     ExpressionAttributeValues: { ':groupId': `${groupId}` }
   };
   console.log('Getting group detail and members with params', params);
-  let group: Group;
-  let members: UserProfile[] = [];
-  let userProfile: UserProfile;
+  let group: GroupRecord;
+  let members: UserProfileResponse[] = [];
+  let userProfile: UserProfileResponse;
   return groups
     .query(params)
     .promise()
     .then(res => res.Items)
     .then(items => {
-      group = <Group>items.find(item => item.type.indexOf('GROUP') > -1);
+      group = <GroupRecord>items.find(item => item.type.indexOf('GROUP') > -1);
       delete group.type;
       items
         .filter(item => item.type && item.type.indexOf('USER') > -1)
@@ -58,18 +58,18 @@ export async function getDetailedGroupByUser(userId: string, groupId: string): P
           if (user.userId !== `${userId}`) {
             delete user.excludedUserIds;
             console.log('Found a member', user);
-            members.push(<UserProfile>user);
+            members.push(<UserProfileResponse>user);
           } else {
             user.excludedUserIds = user.excludedUserIds ? user.excludedUserIds.values : [];
             console.log('Found the user', user);
-            userProfile = <UserProfile>user;
+            userProfile = <UserProfileResponse>user;
           }
         });
     })
     .then(() => new DetailedGroupResponse(group, members, userProfile));
 }
 
-export async function excludeUser(groupId: string, userId: string, excludedUserId: string): Promise<UserProfile> {
+export async function excludeUser(groupId: string, userId: string, excludedUserId: string): Promise<UserProfileResponse> {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Key: { groupId, type: `USER:${userId}` },
@@ -85,11 +85,11 @@ export async function excludeUser(groupId: string, userId: string, excludedUserI
     .then(res => res.Attributes)
     .then(user => {
       user.excludedUserIds = user.excludedUserIds ? user.excludedUserIds.values : [];
-      return <UserProfile>user;
+      return <UserProfileResponse>user;
     });
 }
 
-function getGroup(groupId: string): Promise<Group> {
+function getGroup(groupId: string): Promise<GroupRecord> {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Key: { groupId, type: `GROUP:${groupId}` }
@@ -98,7 +98,7 @@ function getGroup(groupId: string): Promise<Group> {
   return groups
     .get(params)
     .promise()
-    .then(res => <Group>res.Item);
+    .then(res => <GroupRecord>res.Item);
 }
 
 function getGroupAndMembers(groupId: string): Promise<any> {
@@ -116,7 +116,6 @@ function getGroupAndMembers(groupId: string): Promise<any> {
     .then(res => res.Items)
     .then(items => {
       group = <BasicGroupResponse>items.find(item => item.type.indexOf('GROUP') > -1);
-      delete group.type;
       group.members = [];
       items
         .filter(item => item.type && item.type.indexOf('USER') > -1)
@@ -127,7 +126,7 @@ function getGroupAndMembers(groupId: string): Promise<any> {
     .then(() => group);
 }
 
-function getGroups(userProfiles: UserProfile[]): Promise<Group[]> {
+function getGroups(userProfiles: UserProfileResponse[]): Promise<GroupRecord[]> {
   const RequestItems = {};
   const Keys = userProfiles.map(up => {
     return { groupId: up.groupId, type: `GROUP:${up.groupId}` };
@@ -138,10 +137,10 @@ function getGroups(userProfiles: UserProfile[]): Promise<Group[]> {
   return groups
     .batchGet(params)
     .promise()
-    .then(res => <Group[]>res.Responses[process.env.GROUPS_TABLE]);
+    .then(res => <GroupRecord[]>res.Responses[process.env.GROUPS_TABLE]);
 }
 
-function getUserProfiles(userId: string): Promise<UserProfile[]> {
+function getUserProfiles(userId: string): Promise<UserProfileResponse[]> {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     IndexName: process.env.GROUPS_TABLE_TYPE_INDEX,
@@ -157,12 +156,12 @@ function getUserProfiles(userId: string): Promise<UserProfile[]> {
     .then(items =>
       items.map(item => {
         item.excludedUserIds = item.excludedUserIds ? item.excludedUserIds.values : [];
-        return <UserProfile>item;
+        return <UserProfileResponse>item;
       })
     );
 }
 
-function saveGroup(group: Group): Promise<Group> {
+function saveGroup(group: CreateGroupRequest): Promise<CreateGroupRequest> {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Item: group
@@ -174,7 +173,7 @@ function saveGroup(group: Group): Promise<Group> {
     .then(res => group);
 }
 
-function saveUserProfile(userProfile: UserProfile): Promise<UserProfile> {
+function saveUserProfile(userProfile: CreateUserProfileRequest): Promise<CreateUserProfileRequest> {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Item: userProfile
@@ -186,7 +185,7 @@ function saveUserProfile(userProfile: UserProfile): Promise<UserProfile> {
     .then(res => userProfile);
 }
 
-function getUserProfile(groupId: string, userId: string): Promise<UserProfile> {
+function getUserProfile(groupId: string, userId: string): Promise<UserProfileResponse> {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Key: { groupId, userId }
@@ -195,5 +194,5 @@ function getUserProfile(groupId: string, userId: string): Promise<UserProfile> {
   return groups
     .get(params)
     .promise()
-    .then(res => <UserProfile>res.Item);
+    .then(res => <UserProfileResponse>res.Item);
 }
