@@ -2,9 +2,10 @@ import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { CreateGroupRequest } from './create-group-request';
 import { CreateProfileRequest } from './create-profile-request';
-import { getUser } from '../shared';
+import { UserRecord } from './user-record';
 
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
+const users = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
 export const handler = apiWrapper(async ({ body, path, success, error }: ApiSignature) => {
   try {
@@ -32,6 +33,18 @@ async function saveGroup(group: CreateGroupRequest): Promise<CreateGroupRequest>
   console.log('Creating new group with params', params);
   await groups.put(params).promise();
   return group;
+}
+
+function getUser(userId: string): Promise<UserRecord> {
+  const params = {
+    TableName: process.env.USERS_TABLE,
+    Key: { userId }
+  };
+  console.log('Getting user with params', params);
+  return users
+    .get(params)
+    .promise()
+    .then(res => <UserRecord>res.Item);
 }
 
 async function saveProfile(userProfile: CreateProfileRequest): Promise<CreateProfileRequest> {
