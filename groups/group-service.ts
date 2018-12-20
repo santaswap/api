@@ -1,6 +1,6 @@
 import { DynamoDB } from 'aws-sdk';
 import { GroupRecord, CreateGroupRequest, BasicGroupResponse, DetailedGroupResponse } from './group';
-import { CreateUserProfileRequest, UserProfileResponse, UpdateUserProfileRequest } from './user-profile';
+import { UserProfileCreateRequest, UserProfileResponse, UserProfileUpdateRequest } from './user-profile';
 import { getUser } from '../users';
 
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
@@ -8,7 +8,7 @@ const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 export async function createAndJoinGroup(group: CreateGroupRequest, userId: string): Promise<any> {
   await saveGroup(group);
   const user = await getUser(userId);
-  const userProfile = new CreateUserProfileRequest(group, user);
+  const userProfile = new UserProfileCreateRequest(group, user);
   await saveUserProfile(userProfile);
   return { group, user, userProfile };
 }
@@ -16,7 +16,7 @@ export async function createAndJoinGroup(group: CreateGroupRequest, userId: stri
 export async function joinGroup(groupId: string, userId: string): Promise<any> {
   const user = await getUser(userId);
   const group = await getGroup(groupId);
-  const userProfile = new CreateUserProfileRequest(group, user);
+  const userProfile = new UserProfileCreateRequest(group, user);
   await saveUserProfile(userProfile);
   return { group, user, userProfile };
 }
@@ -68,7 +68,11 @@ export async function getDetailedGroupByUser(userId: string, groupId: string): P
     .then(() => new DetailedGroupResponse(group, members, userProfile));
 }
 
-export async function excludeUser(groupId: string, userId: string, excludedUserId: string): Promise<UserProfileResponse> {
+export async function excludeUser(
+  groupId: string,
+  userId: string,
+  excludedUserId: string
+): Promise<UserProfileResponse> {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Key: { groupId, type: `USER:${userId}` },
@@ -88,25 +92,26 @@ export async function excludeUser(groupId: string, userId: string, excludedUserI
     });
 }
 
-export async function updateProfile(updateUserProfileRequest: UpdateUserProfileRequest): Promise<UpdateUserProfileRequest> {
+export async function updateProfile(
+  userProfileUpdateRequest: UserProfileUpdateRequest
+): Promise<UserProfileUpdateRequest> {
   const params = {
     TableName: process.env.GROUPS_TABLE,
-    Item: updateUserProfileRequest
+    Item: userProfileUpdateRequest
   };
   console.log('Updating user profile with params', params);
-  return groups.put(params).promise().then(res => updateUserProfileRequest)
+  await groups.put(params).promise();
+  return userProfileUpdateRequest;
 }
 
-function getGroup(groupId: string): Promise<GroupRecord> {
+async function getGroup(groupId: string): Promise<GroupRecord> {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Key: { groupId, type: `GROUP:${groupId}` }
   };
   console.info('Getting group by groupId with params', params);
-  return groups
-    .get(params)
-    .promise()
-    .then(res => <GroupRecord>res.Item);
+  const res = await groups.get(params).promise();
+  return <GroupRecord>res.Item;
 }
 
 function getGroupAndMembers(groupId: string): Promise<any> {
@@ -134,20 +139,6 @@ function getGroupAndMembers(groupId: string): Promise<any> {
     .then(() => group);
 }
 
-function getGroups(userProfiles: UserProfileResponse[]): Promise<GroupRecord[]> {
-  const RequestItems = {};
-  const Keys = userProfiles.map(up => {
-    return { groupId: up.groupId, type: `GROUP:${up.groupId}` };
-  });
-  RequestItems[process.env.GROUPS_TABLE] = { Keys };
-  const params = { RequestItems };
-  console.log('Getting all user profiles by user with params', JSON.stringify(params));
-  return groups
-    .batchGet(params)
-    .promise()
-    .then(res => <GroupRecord[]>res.Responses[process.env.GROUPS_TABLE]);
-}
-
 function getUserProfiles(userId: string): Promise<UserProfileResponse[]> {
   const params = {
     TableName: process.env.GROUPS_TABLE,
@@ -169,38 +160,22 @@ function getUserProfiles(userId: string): Promise<UserProfileResponse[]> {
     );
 }
 
-function saveGroup(group: CreateGroupRequest): Promise<CreateGroupRequest> {
+async function saveGroup(group: CreateGroupRequest): Promise<CreateGroupRequest> {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Item: group
   };
   console.log('Creating new group with params', params);
-  return groups
-    .put(params)
-    .promise()
-    .then(res => group);
+  await groups.put(params).promise();
+  return group;
 }
 
-function saveUserProfile(userProfile: CreateUserProfileRequest): Promise<CreateUserProfileRequest> {
+async function saveUserProfile(userProfile: UserProfileCreateRequest): Promise<UserProfileCreateRequest> {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Item: userProfile
   };
   console.log('Creating new user profile with params', params);
-  return groups
-    .put(params)
-    .promise()
-    .then(res => userProfile);
-}
-
-function getUserProfile(groupId: string, userId: string): Promise<UserProfileResponse> {
-  const params = {
-    TableName: process.env.GROUPS_TABLE,
-    Key: { groupId, userId }
-  };
-  console.log('Getting user profile with params', params);
-  return groups
-    .get(params)
-    .promise()
-    .then(res => <UserProfileResponse>res.Item);
+  await groups.put(params).promise();
+  return userProfile;
 }
