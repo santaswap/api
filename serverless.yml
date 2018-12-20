@@ -49,7 +49,7 @@ custom:
 
 functions:
   createAndJoinGroup:
-    handler: groups/create-and-join.handler
+    handler: app/create-and-join-groups/create-and-join.handler
     events:
       - http:
           method: post
@@ -61,7 +61,7 @@ functions:
                 userId: true
 
   joinGroup:
-    handler: groups/join.handler
+    handler: app/create-and-join-groups/join.handler
     events:
       - http:
           method: post
@@ -74,7 +74,7 @@ functions:
                 groupId: true
 
   updateProfile:
-    handler: groups/updateProfile.handler
+    handler: app/update-profiles/update-profile.handler
     events:
       - http:
           method: post
@@ -87,7 +87,7 @@ functions:
                 groupId: true
 
   excludeUser:
-    handler: groups/exclude-user.handler
+    handler: app/exclude-users/exclude-user.handler
     events:
       - http:
           method: post
@@ -101,7 +101,7 @@ functions:
                 excludedUserId: true
 
   getAllGroupsByUser:
-    handler: groups/getAllByUser.handler
+    handler: app/get-groups/get-all-by-user.handler
     events:
       - http:
           method: get
@@ -113,7 +113,7 @@ functions:
                 userId: true
 
   getGroupDetailsByUser:
-    handler: groups/getDetailedByUser.handler
+    handler: app/get-groups/get-detailed-by-user.handler
     events:
       - http:
           method: get
@@ -126,7 +126,7 @@ functions:
                 groupId: true
 
   createUser:
-    handler: users/create.handler
+    handler: app/create-users/create.handler
     events:
       - http:
           method: post
