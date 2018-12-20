@@ -43,7 +43,7 @@ anchors:
       - *configure-aws-access
       - run:
           name: Deploy custom domain stage
-          command:  |
+          command: |
             [[ ! -z "$STAGE" ]] || STAGE=$CIRCLE_BRANCH
             echo Deploying API for stage $STAGE
             npm run deploy:domain -- --stage $STAGE
@@ -75,7 +75,7 @@ jobs:
     <<: *node-container-config
     steps:
       - checkout
-      - *load-dependency-cache
+      # - *load-dependency-cache
       - run:
           name: Install dependencies
           command: npm i
