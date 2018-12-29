@@ -12,13 +12,15 @@ tags:
   - name: Group setup
     description: Creating, joining, and managing groups
   - name: Profile mgmt
-    description: Managing user profile information
+    description: Managing profile information
+  - name: User mgmt
+    description: Managing user information
 
 paths:
   /users:
     post:
       tags:
-        - Group setup
+        - User mgmt
       summary: Create user
       consumes:
         - application/json

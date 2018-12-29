@@ -100,7 +100,7 @@ functions:
                 excludedUserId: true
 
   getAllGroupsByUser:
-    handler: app/get-groups/get-all-by-user.handler
+    handler: app/group-setup/get-all-by-user.handler
     events:
       - http:
           method: get
@@ -112,7 +112,7 @@ functions:
                 userId: true
 
   getGroupDetailsByUser:
-    handler: app/get-groups/get-detailed-by-user.handler
+    handler: app/group-setup/get-detailed-by-user.handler
     events:
       - http:
           method: get
