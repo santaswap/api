@@ -86,7 +86,7 @@ functions:
                 groupId: true
 
   excludeUser:
-    handler: app/exclude-users/exclude-user.handler
+    handler: app/profile-mgmt/exclude-user.handler
     events:
       - http:
           method: post
