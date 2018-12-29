@@ -5,7 +5,7 @@ info:
   title: 'Santa Swap API'
   x-logo:
     url: 'https://user-images.githubusercontent.com/2955468/50532511-363a6d80-0ae8-11e9-80db-31bc2ca211b7.png'
-    backgroundColor: '#FFFFFF'
+    backgroundColor: '#FAFAFA'
     altText: 'Santa Swap API logo'
 
 tags:
