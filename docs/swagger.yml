@@ -10,7 +10,9 @@ info:
 
 tags:
   - name: 'Group setup'
-    description: 'Creating and joining games'
+    description: 'Creating, joining, and managing groups'
+  - name: 'Profile mgmt'
+    description: 'Managing user profile information'
 
 paths:
   /users:
@@ -111,6 +113,71 @@ paths:
           schema:
             $ref: '#/definitions/GroupResponse'
 
+  /groups/{groupId}/users/{userId}/profile:
+    post:
+      tags:
+        - Profile mgmt
+      summary: 'Update user profile'
+      description: 'Creates a new group and adds the specified user to that group'
+      consumes:
+        - 'application/json'
+      produces:
+        - 'application/json'
+      parameters:
+        - name: 'groupId'
+          in: 'path'
+          description: "ID of the group the user's profile should be updated in"
+          required: true
+          type: 'string'
+        - name: 'userId'
+          in: 'path'
+          description: 'ID of the user profile to update'
+          required: true
+          type: 'string'
+        - in: 'body'
+          name: 'ProfileRequest'
+          description: 'Properties of user profile'
+          required: true
+          schema:
+            $ref: '#/definitions/ProfileRequest'
+      responses:
+        200:
+          description: 'User successfully added to group'
+          schema:
+            $ref: '#/definitions/GroupResponse'
+
+  /groups/{groupId}/users/{userId}/excludedUsers/{excludedUserId}:
+    post:
+      tags:
+        - Profile mgmt
+      summary: 'Exclude user'
+      description: "Indicates that user doesn't want to be assigned as the excluded user's secret santa"
+      consumes:
+        - 'application/json'
+      produces:
+        - 'application/json'
+      parameters:
+        - name: 'groupId'
+          in: 'path'
+          description: "ID of the group the user's profile should be updated in"
+          required: true
+          type: 'string'
+        - name: 'userId'
+          in: 'path'
+          description: 'ID of the user profile to update'
+          required: true
+          type: 'string'
+        - name: 'excludedUserId'
+          in: 'path'
+          description: 'ID of the user to exclude from secret santa assignment'
+          required: true
+          type: 'string'
+      responses:
+        200:
+          description: 'User successfully added to group'
+          schema:
+            $ref: '#/definitions/ProfileResponse'
+
   /users/{userId}/groups/{groupId}:
     get:
       tags:
@@ -155,12 +222,39 @@ definitions:
         type: 'string'
         description: "User's name"
 
+  ProfileResponse:
+    type: 'object'
+    properties:
+      userId:
+        type: 'string'
+      name:
+        type: 'string'
+        description: "User's name"
+      excludedUserIds:
+        type: 'array'
+        description: "IDs of users this user doesn't want to be assigned as secret santa for"
+        items:
+          type: 'string'
+
   NewGroupRequest:
     type: 'object'
     properties:
       name:
         type: 'string'
         description: "Group's name"
+
+  ProfileRequest:
+    type: 'object'
+    properties:
+      name:
+        type: 'string'
+        description: "User's name"
+      address:
+        type: 'string'
+        description: 'Address the secret santa should ship orders to'
+      giftIdeas:
+        type: 'string'
+        description: "Gift ideas for the user's secret santa"
 
   SimpleGroupResponse:
     type: 'object'

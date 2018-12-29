@@ -73,7 +73,7 @@ functions:
                 groupId: true
 
   updateProfile:
-    handler: app/update-profiles/update-profile.handler
+    handler: app/profile-mgmt/update-profile.handler
     events:
       - http:
           method: post
