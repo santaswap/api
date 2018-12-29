@@ -18,7 +18,7 @@ paths:
   /users:
     post:
       tags:
-        - Group setup
+        - 'Group setup'
       summary: 'Create user'
       consumes:
         - 'application/json'
@@ -40,7 +40,7 @@ paths:
   /users/{userId}/groups:
     post:
       tags:
-        - Group setup
+        - 'Group setup'
       summary: 'Create and join group'
       description: 'Creates a new group and adds the specified user to that group'
       consumes:
@@ -67,7 +67,7 @@ paths:
 
     get:
       tags:
-        - Group setup
+        - 'Group setup'
       summary: 'Get groups by users'
       description: 'Gets all groups that a user has been added to'
       consumes:
@@ -89,7 +89,7 @@ paths:
   /groups/{groupId}/users/{userId}:
     post:
       tags:
-        - Group setup
+        - 'Group setup'
       summary: 'Join group'
       description: 'Creates a new group and adds the specified user to that group'
       consumes:
@@ -116,7 +116,7 @@ paths:
   /groups/{groupId}/users/{userId}/profile:
     post:
       tags:
-        - Profile mgmt
+        - 'Profile mgmt'
       summary: 'Update user profile'
       description: 'Creates a new group and adds the specified user to that group'
       consumes:
@@ -149,7 +149,7 @@ paths:
   /groups/{groupId}/users/{userId}/excludedUsers/{excludedUserId}:
     post:
       tags:
-        - Profile mgmt
+        - 'Profile mgmt'
       summary: 'Exclude user'
       description: "Indicates that user doesn't want to be assigned as the excluded user's secret santa"
       consumes:
@@ -181,7 +181,7 @@ paths:
   /users/{userId}/groups/{groupId}:
     get:
       tags:
-        - Group setup
+        - 'Group setup'
       summary: 'Get group detail by user'
       description: 'Creates a new group and adds the specified user to that group'
       consumes:
