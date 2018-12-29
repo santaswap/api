@@ -59,6 +59,27 @@ paths:
           schema:
             $ref: '#/definitions/GroupResponse'
 
+    get:
+      tags:
+        - Group setup
+      summary: 'Get groups by users'
+      description: 'Gets all groups that a user has been added to'
+      consumes:
+        - 'application/json'
+      produces:
+        - 'application/json'
+      parameters:
+        - name: 'userId'
+          in: 'path'
+          description: 'ID of the user to get groups by'
+          required: true
+          type: 'string'
+      responses:
+        200:
+          description: 'Group successfully created and user added'
+          schema:
+            $ref: '#/definitions/SimpleGroupResponse'
+
   /groups/{groupId}/users/{userId}:
     post:
       tags:
@@ -82,9 +103,36 @@ paths:
           type: 'string'
       responses:
         200:
-          description: 'Group successfully created and user added'
+          description: 'User successfully added to group'
           schema:
             $ref: '#/definitions/GroupResponse'
+
+  /users/{userId}/groups/{groupId}:
+    get:
+      tags:
+        - Group setup
+      summary: 'Get group detail by user'
+      description: 'Creates a new group and adds the specified user to that group'
+      consumes:
+        - 'application/json'
+      produces:
+        - 'application/json'
+      parameters:
+        - name: 'userId'
+          in: 'path'
+          description: 'ID of the user to get group details for (response changes by requesting user)'
+          required: true
+          type: 'string'
+        - name: 'groupId'
+          in: 'path'
+          description: 'ID of the group to get details for'
+          required: true
+          type: 'string'
+      responses:
+        200:
+          description: 'Group successfully created and user added'
+          schema:
+            $ref: '#/definitions/DetailedGroupResponse'
 
 definitions:
   NewUserRequest:
@@ -109,6 +157,51 @@ definitions:
       name:
         type: 'string'
         description: "Group's name"
+
+  SimpleGroupResponse:
+    type: 'object'
+    properties:
+      groupId:
+        type: 'string'
+      name:
+        type: 'string'
+        description: 'Name of the group'
+      members:
+        type: 'array'
+        description: 'Names of the people in the group'
+        items:
+          type: 'string'
+
+  DetailedGroupResponse:
+    type: 'object'
+    properties:
+      groupId:
+        type: 'string'
+      code:
+        type: 'string'
+        description: 'Code for joining this group'
+      name:
+        type: 'string'
+        description: 'Name of the group'
+      profile:
+        $ref: '#/definitions/Profile'
+      members:
+        type: 'array'
+        description: 'Names of the people in the group'
+        items:
+          $ref: '#/definitions/UserResponse'
+
+  Profile:
+    type: 'object'
+    properties:
+      profileId:
+        type: 'string'
+      name:
+        type: 'string'
+      excludedUserIds:
+        type: 'array'
+        items:
+          type: 'string'
 
   GroupResponse:
     type: 'object'
