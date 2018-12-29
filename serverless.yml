@@ -24,14 +24,13 @@ provider:
         - { Fn::GetAtt: [GroupsTable, Arn] }
         - { Fn::Join: ['', [{ Fn::GetAtt: [GroupsTable, Arn] }, '/index/*']] }
         - { Fn::GetAtt: [UsersTable, Arn] }
-        - { Fn::GetAtt: [InvitationsTable, Arn] }
   environment:
     IOPIPE_TOKEN: ${env:IOPIPE_TOKEN}
-    IOPIPE_LOGGER_ENABLED: true
     GROUPS_TABLE: { Ref: GroupsTable }
     GROUPS_TABLE_TYPE_INDEX: TypeIndex
     USERS_TABLE: { Ref: UsersTable }
-    INVITATIONS_TABLE: { Ref: InvitationsTable }
+    REVISION: ${file(infrastructure/helper.js):revision}
+    STAGE: ${opt:stage}
 
 custom:
   stageProperties:
@@ -49,7 +48,7 @@ custom:
 
 functions:
   createAndJoinGroup:
-    handler: groups/create-and-join.handler
+    handler: app/setup/create-and-join.handler
     events:
       - http:
           method: post
@@ -61,7 +60,7 @@ functions:
                 userId: true
 
   joinGroup:
-    handler: groups/join.handler
+    handler: app/setup/join.handler
     events:
       - http:
           method: post
@@ -73,8 +72,21 @@ functions:
                 userId: true
                 groupId: true
 
+  updateProfile:
+    handler: app/update-profiles/update-profile.handler
+    events:
+      - http:
+          method: post
+          path: groups/{groupId}/users/{userId}/profile
+          cors: true
+          request:
+            parameters:
+              paths:
+                userId: true
+                groupId: true
+
   excludeUser:
-    handler: groups/exclude-user.handler
+    handler: app/exclude-users/exclude-user.handler
     events:
       - http:
           method: post
@@ -88,7 +100,7 @@ functions:
                 excludedUserId: true
 
   getAllGroupsByUser:
-    handler: groups/getAllByUser.handler
+    handler: app/get-groups/get-all-by-user.handler
     events:
       - http:
           method: get
@@ -100,7 +112,7 @@ functions:
                 userId: true
 
   getGroupDetailsByUser:
-    handler: groups/getDetailedByUser.handler
+    handler: app/get-groups/get-detailed-by-user.handler
     events:
       - http:
           method: get
@@ -113,7 +125,7 @@ functions:
                 groupId: true
 
   createUser:
-    handler: users/create.handler
+    handler: app/create-users/create.handler
     events:
       - http:
           method: post
@@ -122,21 +134,6 @@ functions:
 
 resources:
   Resources:
-    InvitationsTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        AttributeDefinitions:
-          - AttributeName: groupId
-            AttributeType: S
-          - AttributeName: invitationId
-            AttributeType: S
-        BillingMode: PAY_PER_REQUEST
-        KeySchema:
-          - AttributeName: groupId
-            KeyType: HASH
-          - AttributeName: invitationId
-            KeyType: RANGE
-
     UsersTable:
       Type: AWS::DynamoDB::Table
       Properties:

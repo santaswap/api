@@ -1,6 +1,6 @@
 import { v1 } from 'uuid';
 
-export class User {
+export class CreateUserRequest {
   userId: string;
   name: string;
 

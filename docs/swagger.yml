@@ -1,0 +1,139 @@
+swagger: '2.0'
+info:
+  description: 'API for the Manwaring codenames app'
+  version: '0.0.1'
+  title: 'Codenames API'
+
+tags:
+  - name: 'Games'
+    description: 'Creating and joining games'
+
+paths:
+  /games:
+    post:
+      tags:
+        - Games
+      summary: 'Create and join game'
+      consumes:
+        - 'application/json'
+      produces:
+        - 'application/json'
+      parameters:
+        - in: 'body'
+          name: 'body'
+          description: 'Player that will join the game'
+          required: true
+          schema:
+            $ref: '#/definitions/NewPlayerRequest'
+      responses:
+        200:
+          description: 'Game and player successfully created'
+          schema:
+            $ref: '#/definitions/JoinGameResponse'
+
+  /games/{code}/players:
+    post:
+      tags:
+        - Games
+      summary: 'Join a game'
+      consumes:
+        - 'application/json'
+      produces:
+        - 'application/json'
+      parameters:
+        - name: 'code'
+          in: 'path'
+          description: 'Code of the game that is being joined'
+          required: true
+          type: 'string'
+        - in: 'body'
+          name: 'body'
+          description: 'Player that will join the game'
+          required: true
+          schema:
+            $ref: '#/definitions/NewPlayerRequest'
+      responses:
+        200:
+          description: 'Game and player successfully created'
+          schema:
+            $ref: '#/definitions/JoinGameResponse'
+
+  /games/{code}/starts:
+    post:
+      tags:
+        - Games
+      summary: 'Start a game'
+      consumes:
+        - 'application/json'
+      produces:
+        - 'application/json'
+      parameters:
+        - name: 'code'
+          in: 'path'
+          description: 'Code of the game that is being started'
+          required: true
+          type: 'string'
+      responses:
+        200:
+          description: 'Game successfully started'
+          schema:
+            $ref: '#/definitions/GameResponse'
+
+definitions:
+  NewPlayerRequest:
+    type: 'object'
+    properties:
+      name:
+        type: 'string'
+        description: "Player's name"
+
+  JoinGameResponse:
+    type: 'object'
+    properties:
+      game:
+        $ref: '#/definitions/GameResponse'
+      player:
+        $ref: '#/definitions/PlayerResponse'
+
+  GameResponse:
+    type: 'object'
+    properties:
+      gameId:
+        type: 'string'
+      code:
+        type: 'string'
+        description: 'Code for joining this game'
+      startTeam:
+        type: 'string'
+        description: 'Team that starts the game first'
+      players:
+        type: 'array'
+        items:
+          $ref: '#/definitions/PlayerResponse'
+      cards:
+        type: 'array'
+        items:
+          $ref: '#/definitions/Card'
+
+  PlayerResponse:
+    type: 'object'
+    properties:
+      playerId:
+        type: 'string'
+      name:
+        type: 'string'
+        description: "Player's name"
+
+  Card:
+    type: 'object'
+    properties:
+      cardId:
+        type: 'string'
+      word:
+        type: 'string'
+      order:
+        type: 'integer'
+      selected:
+        type: 'boolean'
+      team:
+        type: 'string'
