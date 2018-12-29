@@ -48,7 +48,7 @@ custom:
 
 functions:
   createAndJoinGroup:
-    handler: app/setup/create-and-join.handler
+    handler: app/group-setup/create-and-join.handler
     events:
       - http:
           method: post
@@ -60,7 +60,7 @@ functions:
                 userId: true
 
   joinGroup:
-    handler: app/setup/join.handler
+    handler: app/group-setup/join.handler
     events:
       - http:
           method: post
