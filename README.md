@@ -7,6 +7,8 @@
 
 # Santa Swap API
 
+[API documentation](https://santaswap.github.io/api)
+
 [build-badge]: https://circleci.com/gh/santaswap/api.svg?style=shield&circle-token=8fe498e3f3a9afad454abe589e6046906ebdb56e
 [build-badge-url]: https://circleci.com/gh/santaswap/api
 [dependency-badge]: https://david-dm.org/santaswap/api.svg
