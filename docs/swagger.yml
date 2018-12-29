@@ -1,18 +1,18 @@
 swagger: '2.0'
 info:
-  description: 'API for the Manwaring codenames app'
+  description: 'API for the Santa Swap app'
   version: '0.0.1'
-  title: 'Codenames API'
+  title: 'Santa Swap API'
 
 tags:
-  - name: 'Games'
+  - name: 'Group setup'
     description: 'Creating and joining games'
 
 paths:
   /games:
     post:
       tags:
-        - Games
+        - Group setup
       summary: 'Create and join game'
       consumes:
         - 'application/json'
@@ -34,7 +34,7 @@ paths:
   /games/{code}/players:
     post:
       tags:
-        - Games
+        - Group setup
       summary: 'Join a game'
       consumes:
         - 'application/json'
@@ -61,7 +61,7 @@ paths:
   /games/{code}/starts:
     post:
       tags:
-        - Games
+        - Group setup
       summary: 'Start a game'
       consumes:
         - 'application/json'
