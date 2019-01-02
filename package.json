@@ -5,6 +5,7 @@
   "scripts": {
     "deploy:api": "sls deploy",
     "remove:api": "sls remove",
+    "test:api": "nyc --exclude=app/**/*.cucumber* node_modules/cucumber/bin/cucumber-js app/**/*.feature",
     "deploy:domain": "sls create_domain",
     "remove:domain": "sls delete_domain",
     "pregenerate:swagger": "echo 'Generating swagger.json from docs/swagger.yml specification file'",

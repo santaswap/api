@@ -13,3 +13,6 @@ iopipe_handlers
 
 # Stack outputs from serverless plugin
 .stack-outputs.yml
+
+# Test coverage output
+.nyc_output
