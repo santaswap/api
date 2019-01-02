@@ -68,7 +68,7 @@ anchors:
       - attach_workspace:
           at: .
       - run:
-          name: Tests
+          name: Run tests
           command: npm test
 
   branch-only: &branch-only
@@ -112,7 +112,8 @@ workflows:
   version: 2
   branch-pipeline:
     jobs:
-      - install-dependencies
+      - install-dependencies:
+          <<: *branch-only
       - deploy-api-branch:
           <<: *branch-only
           context: santaswap-aws
@@ -125,7 +126,8 @@ workflows:
 
   prod-pipeline:
     jobs:
-      - install-dependencies
+      - install-dependencies:
+          <<: *prod-only
       - deploy-api-prod:
           <<: *prod-only
           context: santaswap-aws
