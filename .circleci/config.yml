@@ -105,9 +105,12 @@ jobs:
   deploy-api-branch:
     <<: *deploy-api
 
+  test-api:
+    <<: *test-api
+
 workflows:
   version: 2
-  pipeline:
+  branch-pipeline:
     jobs:
       - install-dependencies
       - deploy-api-branch:
@@ -115,14 +118,20 @@ workflows:
           context: santaswap-aws
           requires:
             - install-dependencies
-      - test-api-branch:
+      - test-api:
+          <<: *branch-only
           requires:
             - deploy-api-branch
+
+  prod-pipeline:
+    jobs:
+      - install-dependencies
       - deploy-api-prod:
           <<: *prod-only
           context: santaswap-aws
           requires:
             - install-dependencies
-      - test-api-prod:
+      - test-api:
+          <<: *prod-only
           requires:
             - deploy-api-prod
