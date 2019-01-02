@@ -115,8 +115,14 @@ workflows:
           context: santaswap-aws
           requires:
             - install-dependencies
+      - test-api-branch:
+          requires:
+            - deploy-api-branch
       - deploy-api-prod:
           <<: *prod-only
           context: santaswap-aws
           requires:
             - install-dependencies
+      - test-api-prod:
+          requires:
+            - deploy-api-prod
