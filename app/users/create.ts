@@ -15,14 +15,12 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
   }
 });
 
-function saveUser(user: CreateUserRequest): Promise<CreateUserRequest> {
+async function saveUser(user: CreateUserRequest): Promise<CreateUserRequest> {
   const params = {
     TableName: process.env.USERS_TABLE,
     Item: user
   };
   console.log('Creating new user with params', params);
-  return users
-    .put(params)
-    .promise()
-    .then(res => user);
+  await users.put(params).promise();
+  return user;
 }

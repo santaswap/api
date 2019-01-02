@@ -2,14 +2,16 @@ import { binding, given, when, then, after } from 'cucumber-tsflow';
 import { expect } from 'chai';
 import { post } from 'request-promise';
 import { Chance } from 'chance';
-import { getDeployedUrl } from '@manwaring/serverless-test-helper';
+import { getDeployedUrl, SharedState } from '@manwaring/serverless-test-helper';
 
 const chance = new Chance();
 const URL = getDeployedUrl();
 const TEST_NAME_PREFIX = 'TEST_USER';
 
-@binding()
+@binding([SharedState])
 export class CreateUser {
+  constructor(protected sharedState: SharedState) {}
+
   userRequest = { name: `${TEST_NAME_PREFIX}: ${chance.name()}` };
   userResponse: any;
 
@@ -21,7 +23,9 @@ export class CreateUser {
       simple: false,
       body: JSON.stringify(this.userRequest)
     };
-    this.userResponse = JSON.parse(await post(params));
+    const userResponse = JSON.parse(await post(params));
+    this.userResponse = userResponse;
+    this.sharedState.userId = userResponse.userId;
   }
 
   @then(/the API response will include the new user/)

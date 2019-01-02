@@ -20,8 +20,9 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "@manwaring/serverless-test-helper": "0.0.2",
-    "@types/aws-lambda": "8.10.1",
+    "@manwaring/serverless-test-helper": "0.0.3",
+    "@types/aws-lambda": "^8.10.1",
+    "@types/aws-sdk": "^2.7.0",
     "@types/chance": "^1.0.1",
     "@types/node": "^8.0.57",
     "@types/request-promise": "^4.1.42",

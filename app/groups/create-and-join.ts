@@ -22,7 +22,7 @@ async function createAndJoinGroup(group: CreateGroupRequest, userId: string): Pr
   const user = await getUser(userId);
   const userProfile = new CreateProfileRequest(group, user);
   await saveProfile(userProfile);
-  return { group, user, userProfile };
+  return group;
 }
 
 async function saveGroup(group: CreateGroupRequest): Promise<CreateGroupRequest> {
