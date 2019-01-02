@@ -4,7 +4,8 @@ info:
   version: 0.0.1
   title: Santa Swap API
   x-logo:
-    url: 'https://user-images.githubusercontent.com/2955468/50532511-363a6d80-0ae8-11e9-80db-31bc2ca211b7.png'
+    # url: 'https://user-images.githubusercontent.com/2955468/50532511-363a6d80-0ae8-11e9-80db-31bc2ca211b7.png'
+    url: https://user-images.githubusercontent.com/2955468/50580290-b29bbc00-0e1a-11e9-810f-eb8b2ae702f0.png
     backgroundColor: '#FAFAFA'
     altText: Santa Swap API logo
 

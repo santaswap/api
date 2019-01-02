@@ -5,6 +5,8 @@ plugins:
   - serverless-plugin-iopipe
   - serverless-webpack
   - serverless-plugin-iam-checker
+  - serverless-cloudformation-resource-counter
+  - serverless-stack-output
   - serverless-domain-manager
 
 provider:
@@ -30,7 +32,7 @@ provider:
     GROUPS_TABLE_TYPE_INDEX: TypeIndex
     USERS_TABLE: { Ref: UsersTable }
     REVISION: ${file(infrastructure/helper.js):revision}
-    STAGE: ${opt:stage}
+    STAGE: ${opt:stage, self:provider.stage}
 
 custom:
   stageProperties:
@@ -40,6 +42,8 @@ custom:
     prod:
       enabled: true
       basePath: ''
+  # Stupdily named (and stupidly not namespaced) property for the stack output serverless plugin
+  output: { file: infrastructure/.stack-outputs.yml }
   customDomain:
     basePath: ${self:custom.stageProperties.${opt:stage, self:provider.stage}.basePath, self:custom.stageProperties.default.basePath}
     domainName: api.santaswap.io

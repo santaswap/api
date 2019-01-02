@@ -10,3 +10,6 @@ jspm_packages
 
 # IOPipe directories
 iopipe_handlers
+
+# Stack outputs from serverless plugin
+.stack-outputs.yml
