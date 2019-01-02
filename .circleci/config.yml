@@ -9,7 +9,7 @@
 anchors:
   node-container-config: &node-container-config
     docker:
-      - image: circleci/node:10-browsers
+      - image: circleci/node:10.15
         environment:
           TERM: dumb
 
@@ -53,6 +53,23 @@ anchors:
             [[ ! -z "$STAGE" ]] || STAGE=$CIRCLE_BRANCH
             echo Deploying API for stage $STAGE
             npm run deploy:api -- --stage $STAGE
+      # Save infrastructure folder for retreiving stack outputs during testing
+      - persist_to_workspace:
+          root: .
+          paths:
+            - infrastructure
+
+  test-api: &test-api
+    <<: *node-container-config
+    steps:
+      - checkout
+      - *load-dependency-cache
+      # Load infrastructure folder for retreiving stack outputs
+      - attach_workspace:
+          at: .
+      - run:
+          name: Tests
+          command: npm test
 
   branch-only: &branch-only
     filters:
