@@ -1,13 +1,16 @@
 import { binding, given, when, then, after } from 'cucumber-tsflow';
 import { expect } from 'chai';
 import { post } from 'request-promise';
+import { Chance } from 'chance';
 import { getDeployedUrl } from '@manwaring/serverless-test-helper';
 
+const chance = new Chance();
 const URL = getDeployedUrl();
+const TEST_NAME_PREFIX = 'TEST_USER';
 
 @binding()
 export class CreateUser {
-  userRequest = { name: 'This is my name' };
+  userRequest = { name: `${TEST_NAME_PREFIX}: ${chance.name()}` };
   userResponse: any;
 
   @when(/a valid user create request is made/)

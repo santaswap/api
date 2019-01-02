@@ -22,9 +22,11 @@
   "devDependencies": {
     "@manwaring/serverless-test-helper": "0.0.2",
     "@types/aws-lambda": "8.10.1",
+    "@types/chance": "^1.0.1",
     "@types/node": "^8.0.57",
     "@types/request-promise": "^4.1.42",
     "chai": "^4.2.0",
+    "chance": "^1.0.18",
     "cucumber": "^5.1.0",
     "cucumber-tsflow": "^3.2.0",
     "git-rev-sync": "^1.12.0",
