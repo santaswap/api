@@ -1,8 +1,8 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { CreateProfileRequest } from './create-profile-request';
-import { GroupRecord } from './group-record';
-import { UserRecord } from './user-record';
+import { CreateProfileRequest } from './profile';
+import { GroupRecord } from './group';
+import { UserRecord } from './user';
 
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 const users = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });

@@ -1,7 +1,7 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { ProfileResponse } from './profile-response';
-import { BasicGroupResponse } from './basic-group-response';
+import { ProfileResponse } from './profile';
+import { BasicGroupResponse } from './group';
 
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 

@@ -6,7 +6,7 @@ import { getDeployedUrl, SharedState } from '@manwaring/serverless-test-helper';
 
 const chance = new Chance();
 const URL = getDeployedUrl();
-const TEST_NAME_PREFIX = 'TEST_USER';
+const TEST_NAME_PREFIX = 'TEST_GROUP';
 
 @binding([SharedState])
 export class CreateAndJoinGroup {

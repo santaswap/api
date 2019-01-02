@@ -1,8 +1,8 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { CreateGroupRequest } from './create-group-request';
-import { CreateProfileRequest } from './create-profile-request';
-import { UserRecord } from './user-record';
+import { CreateGroupRequest, BasicGroupResponse, GroupRecord } from './group';
+import { CreateProfileRequest, ProfileRecord } from './profile';
+import { UserRecord } from './user';
 
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 const users = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
@@ -17,22 +17,22 @@ export const handler = apiWrapper(async ({ body, path, success, error }: ApiSign
   }
 });
 
-async function createAndJoinGroup(group: CreateGroupRequest, userId: string): Promise<any> {
-  await saveGroup(group);
+async function createAndJoinGroup(createGroupRequest: CreateGroupRequest, userId: string): Promise<any> {
+  const group = await saveGroup(createGroupRequest);
   const user = await getUser(userId);
-  const userProfile = new CreateProfileRequest(group, user);
-  await saveProfile(userProfile);
-  return group;
+  const createProfileRequest = new CreateProfileRequest(group, user);
+  const profile = await saveProfile(createProfileRequest);
+  return new BasicGroupResponse(group, [profile]);
 }
 
-async function saveGroup(group: CreateGroupRequest): Promise<CreateGroupRequest> {
+async function saveGroup(group: CreateGroupRequest): Promise<GroupRecord> {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Item: group
   };
   console.log('Creating new group with params', params);
   await groups.put(params).promise();
-  return group;
+  return <GroupRecord>group;
 }
 
 function getUser(userId: string): Promise<UserRecord> {
@@ -47,12 +47,12 @@ function getUser(userId: string): Promise<UserRecord> {
     .then(res => <UserRecord>res.Item);
 }
 
-async function saveProfile(userProfile: CreateProfileRequest): Promise<CreateProfileRequest> {
+async function saveProfile(userProfile: CreateProfileRequest): Promise<ProfileRecord> {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Item: userProfile
   };
   console.log('Creating new user profile with params', params);
   await groups.put(params).promise();
-  return userProfile;
+  return <ProfileRecord>userProfile;
 }
