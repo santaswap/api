@@ -17,7 +17,8 @@ export class CreateAndJoinGroup {
     const params = {
       url: `${URL}/users/${this.sharedState.userId}/groups/${this.sharedState.groupId}`,
       method: 'get',
-      simple: false
+      simple: false,
+      headers: { 'SantaSwap-Test-Request': true }
     };
     const groupResponse = JSON.parse(await get(params));
     this.groupResponse = groupResponse;

@@ -19,7 +19,8 @@ export class ExcludeUser {
         this.sharedState.anotherUserId
       }`,
       method: 'post',
-      simple: false
+      simple: false,
+      headers: { 'SantaSwap-Test-Request': true }
     };
     const exclusionResponse = JSON.parse(await post(params));
     this.exclusionResponse = exclusionResponse;

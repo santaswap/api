@@ -16,8 +16,7 @@ export class UpdateProfile {
   profileRequest = {
     name: `${TEST_NAME_PREFIX}: ${chance.name()}`,
     address: chance.address(),
-    giftIdeas: chance.paragraph(),
-    test: true
+    giftIdeas: chance.paragraph()
   };
   profileResponse: any;
 
@@ -27,7 +26,8 @@ export class UpdateProfile {
       url: `${URL}/groups/${this.sharedState.groupId}/users/${this.sharedState.userId}/profile`,
       method: 'post',
       simple: false,
-      body: JSON.stringify(this.profileRequest)
+      body: JSON.stringify(this.profileRequest),
+      headers: { 'SantaSwap-Test-Request': true }
     };
     const profileResponse = JSON.parse(await post(params));
     this.profileResponse = profileResponse;

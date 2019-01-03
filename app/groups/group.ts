@@ -11,17 +11,17 @@ export class CreateGroupRequest {
   name: string;
   code: string;
   created: string;
-  test: boolean;
+  testRequest: boolean;
   recordExpiration: number;
 
-  constructor(body: any) {
+  constructor(body: any, testRequest: boolean) {
     this.groupId = v4();
     this.created = new Date().toUTCString();
     this.type = GROUP_TYPE_PREFIX;
     this.name = body.name;
     this.code = chance.word({ length: 5 }).toUpperCase();
-    this.test = body.test;
-    if (body.test) {
+    this.testRequest = testRequest;
+    if (testRequest) {
       const MINUTES_TO_LIVE = 30;
       const MILLISECONDS_TO_LIVE = MINUTES_TO_LIVE * 60 * 1000;
       this.recordExpiration = Math.floor(new Date(Date.now() + MILLISECONDS_TO_LIVE).getTime() / 1000);
@@ -67,7 +67,7 @@ export class GroupRecord {
   type: string;
   code: string;
   created: string;
-  test: boolean;
+  testRequest: boolean;
   recordExpiration: number;
 
   constructor(record: any) {
@@ -77,5 +77,6 @@ export class GroupRecord {
     this.code = record.code;
     this.created = record.created;
     this.recordExpiration = record.recordExpiration;
+    this.testRequest = record.testRequest;
   }
 }

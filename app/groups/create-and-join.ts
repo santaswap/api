@@ -7,9 +7,9 @@ import { UserRecord } from './user';
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 const users = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
-export const handler = apiWrapper(async ({ body, path, success, error }: ApiSignature) => {
+export const handler = apiWrapper(async ({ body, path, testRequest, success, error }: ApiSignature) => {
   try {
-    const group = new CreateGroupRequest(body);
+    const group = new CreateGroupRequest(body, testRequest);
     const response = await createAndJoinGroup(group, path.userId);
     success(response);
   } catch (err) {

@@ -27,6 +27,7 @@ provider:
         - { Fn::Join: ['', [{ Fn::GetAtt: [GroupsTable, Arn] }, '/index/*']] }
         - { Fn::GetAtt: [UsersTable, Arn] }
   environment:
+    TEST_REQUEST_HEADER: SantaSwap-Test-Request
     IOPIPE_TOKEN: ${env:IOPIPE_TOKEN}
     GROUPS_TABLE: { Ref: GroupsTable }
     GROUPS_TABLE_TYPE_INDEX: TypeIndex

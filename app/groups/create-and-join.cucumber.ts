@@ -13,7 +13,7 @@ const TIMEOUT = 10000;
 export class CreateAndJoinGroup {
   constructor(protected sharedState: SharedState) {}
 
-  groupRequest = { name: `${TEST_NAME_PREFIX}: ${chance.last()} family`, test: true };
+  groupRequest = { name: `${TEST_NAME_PREFIX}: ${chance.last()} family` };
   groupResponse: any;
 
   @when(/a valid create and join request is made/, null, TIMEOUT)
@@ -22,7 +22,8 @@ export class CreateAndJoinGroup {
       url: `${URL}/users/${this.sharedState.userId}/groups`,
       method: 'post',
       simple: false,
-      body: JSON.stringify(this.groupRequest)
+      body: JSON.stringify(this.groupRequest),
+      headers: { 'SantaSwap-Test-Request': true }
     };
     const groupResponse = JSON.parse(await post(params));
     this.groupResponse = groupResponse;
