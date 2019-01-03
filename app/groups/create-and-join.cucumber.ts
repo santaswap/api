@@ -13,7 +13,7 @@ const TIMEOUT = 10000;
 export class CreateAndJoinGroup {
   constructor(protected sharedState: SharedState) {}
 
-  groupRequest = { name: `${TEST_NAME_PREFIX}: ${chance.last()} family` };
+  groupRequest = { name: `${TEST_NAME_PREFIX}: ${chance.last()} family`, test: true };
   groupResponse: any;
 
   @when(/a valid create and join request is made/, null, TIMEOUT)

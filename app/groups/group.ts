@@ -11,6 +11,8 @@ export class CreateGroupRequest {
   name: string;
   code: string;
   created: string;
+  test: boolean;
+  recordExpiration: number;
 
   constructor(body: any) {
     this.groupId = v4();
@@ -18,6 +20,12 @@ export class CreateGroupRequest {
     this.type = GROUP_TYPE_PREFIX;
     this.name = body.name;
     this.code = chance.word({ length: 5 }).toUpperCase();
+    this.test = body.test;
+    if (body.test) {
+      const MINUTES_TO_LIVE = 30;
+      const MILLISECONDS_TO_LIVE = MINUTES_TO_LIVE * 60 * 1000;
+      this.recordExpiration = Math.floor(new Date(Date.now() + MILLISECONDS_TO_LIVE).getTime() / 1000);
+    }
   }
 }
 
@@ -59,6 +67,8 @@ export class GroupRecord {
   type: string;
   code: string;
   created: string;
+  test: boolean;
+  recordExpiration: number;
 
   constructor(record: any) {
     this.groupId = record.groupId;
@@ -66,5 +76,6 @@ export class GroupRecord {
     this.type = record.type;
     this.code = record.code;
     this.created = record.created;
+    this.recordExpiration = record.recordExpiration;
   }
 }

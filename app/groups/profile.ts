@@ -11,6 +11,9 @@ export class ProfileRecord {
   giftIdeas?: string;
   targetUserId?: string;
   excludedUserIds?: string[];
+  test: boolean;
+  recordExpiration: number;
+  created: string;
 
   constructor(record: any) {
     this.groupId = record.groupId;
@@ -20,6 +23,9 @@ export class ProfileRecord {
     this.giftIdeas = record.giftIdeas;
     this.targetUserId = record.targetUserId;
     this.excludedUserIds = record.excludedUserIds;
+    this.recordExpiration = record.recordExpiration;
+    this.created = record.created;
+    this.test = record.test;
   }
 
   getProfileResponse(): ProfileResponse {
@@ -54,11 +60,19 @@ export class CreateProfileRequest {
   userId: string;
   name: string;
   created: string;
+  test: boolean;
+  recordExpiration: number;
 
   constructor(group: GroupRecord, user: User) {
     this.groupId = group.groupId;
+    this.test = group.test;
     this.created = new Date().toUTCString();
     this.name = user.name;
     this.type = `${PROFILE_TYPE_PREFIX}${user.userId}`;
+    if (group.test) {
+      const MINUTES_TO_LIVE = 30;
+      const MILLISECONDS_TO_LIVE = MINUTES_TO_LIVE * 60 * 1000;
+      this.recordExpiration = Math.floor(new Date(Date.now() + MILLISECONDS_TO_LIVE).getTime() / 1000);
+    }
   }
 }

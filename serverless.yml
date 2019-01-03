@@ -157,12 +157,17 @@ resources:
             AttributeType: S
           - AttributeName: type
             AttributeType: S
+          # - AttributeName: recordExpiration
+          #   AttributeType: N
         BillingMode: PAY_PER_REQUEST
         KeySchema:
           - AttributeName: groupId
             KeyType: HASH
           - AttributeName: type
             KeyType: RANGE
+        TimeToLiveSpecification:
+          AttributeName: recordExpiration
+          Enabled: true
         GlobalSecondaryIndexes:
           - IndexName: TypeIndex
             KeySchema:
