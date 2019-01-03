@@ -1,7 +1,7 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { CreateProfileRequest } from './profile';
-import { GroupRecord } from './group';
+import { GroupRecord, BasicGroupResponse } from './group';
 import { UserRecord } from './user';
 
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
@@ -28,12 +28,12 @@ function getUser(userId: string): Promise<UserRecord> {
     .then(res => <UserRecord>res.Item);
 }
 
-async function joinGroup(groupId: string, userId: string): Promise<any> {
+async function joinGroup(groupId: string, userId: string): Promise<BasicGroupResponse> {
   const user = await getUser(userId);
   const group = await getGroup(groupId);
   const userProfile = new CreateProfileRequest(group, user);
   await saveProfile(userProfile);
-  return { group, user, userProfile };
+  return new BasicGroupResponse(group, [userProfile]);
 }
 
 async function getGroup(groupId: string): Promise<GroupRecord> {

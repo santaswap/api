@@ -31,9 +31,11 @@ export class CreateProfileRequest {
   type: string;
   userId: string;
   name: string;
+  created: string;
 
   constructor(group: GroupRecord, user: User) {
     this.groupId = group.groupId;
+    this.created = new Date().toUTCString();
     this.name = user.name;
     this.type = `${USER_TYPE_PREFIX}${user.userId}`;
   }

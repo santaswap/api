@@ -1,13 +1,15 @@
 import { ProfileRecord, ProfileResponse } from './profile';
-import { v1 } from 'uuid';
+import { v4 } from 'uuid';
 
 export class CreateGroupRequest {
   groupId: string;
   type: string = 'GROUP:';
   name: string;
+  created: string;
 
   constructor(body: any) {
-    this.groupId = v1();
+    this.groupId = v4();
+    this.created = new Date().toUTCString();
     this.type += this.groupId;
     this.name = body.name;
   }
@@ -44,6 +46,5 @@ export class DetailedGroupResponse {
 export interface GroupRecord {
   groupId: string;
   name: string;
-  code: string;
   type: string;
 }
