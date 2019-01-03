@@ -148,6 +148,9 @@ resources:
         KeySchema:
           - AttributeName: userId
             KeyType: HASH
+        TimeToLiveSpecification:
+          AttributeName: recordExpiration
+          Enabled: true
 
     GroupsTable:
       Type: AWS::DynamoDB::Table
@@ -157,8 +160,6 @@ resources:
             AttributeType: S
           - AttributeName: type
             AttributeType: S
-          # - AttributeName: recordExpiration
-          #   AttributeType: N
         BillingMode: PAY_PER_REQUEST
         KeySchema:
           - AttributeName: groupId

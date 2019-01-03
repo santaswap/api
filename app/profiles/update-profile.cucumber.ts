@@ -16,7 +16,8 @@ export class UpdateProfile {
   profileRequest = {
     name: `${TEST_NAME_PREFIX}: ${chance.name()}`,
     address: chance.address(),
-    giftIdeas: chance.paragraph()
+    giftIdeas: chance.paragraph(),
+    test: true
   };
   profileResponse: any;
 
