@@ -4,6 +4,7 @@ import { get } from 'request-promise';
 import { getDeployedUrl, SharedState } from '@manwaring/serverless-test-helper';
 
 const URL = getDeployedUrl();
+const TIMEOUT = 10000;
 
 @binding([SharedState])
 export class CreateAndJoinGroup {
@@ -11,7 +12,7 @@ export class CreateAndJoinGroup {
 
   groupResponse: any;
 
-  @when(/a valid get detailed by user request is made/)
+  @when(/a valid get detailed by user request is made/, null, TIMEOUT)
   public async getAllGroups() {
     const params = {
       url: `${URL}/users/${this.sharedState.userId}/groups/${this.sharedState.groupId}`,

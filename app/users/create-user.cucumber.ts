@@ -7,6 +7,7 @@ import { getDeployedUrl, SharedState } from '@manwaring/serverless-test-helper';
 const chance = new Chance();
 const URL = getDeployedUrl();
 const TEST_NAME_PREFIX = 'TEST_USER';
+const TIMEOUT = 10000;
 
 @binding([SharedState])
 export class CreateUser {
@@ -15,7 +16,7 @@ export class CreateUser {
   userRequest = { name: `${TEST_NAME_PREFIX}: ${chance.name()}` };
   userResponse: any;
 
-  @when(/a valid user create request is made/)
+  @when(/a valid user create request is made/, null, TIMEOUT)
   public async createUser() {
     const params = {
       url: `${URL}/users`,

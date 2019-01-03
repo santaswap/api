@@ -28,6 +28,7 @@ async function excludeUser(groupId: string, userId: string, excludedUserId: stri
     .promise()
     .then(res => res.Attributes)
     .then(user => {
+      console.log('Received data from Dynamo', user);
       user.excludedUserIds = user.excludedUserIds ? user.excludedUserIds.values : [];
       return <ProfileResponse>user;
     });

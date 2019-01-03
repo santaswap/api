@@ -6,34 +6,37 @@ import { getDeployedUrl, SharedState } from '@manwaring/serverless-test-helper';
 
 const chance = new Chance();
 const URL = getDeployedUrl();
-const TEST_NAME_PREFIX = 'TEST_GROUP';
+const TEST_NAME_PREFIX = 'TEST_USER';
+const TIMEOUT = 10000;
 
 @binding([SharedState])
-export class CreateAndJoinGroup {
+export class UpdateProfile {
   constructor(protected sharedState: SharedState) {}
 
-  groupRequest = { name: `${TEST_NAME_PREFIX}: ${chance.last()} family` };
-  groupResponse: any;
+  profileRequest = {
+    name: `${TEST_NAME_PREFIX}: ${chance.name()}`,
+    address: chance.address(),
+    giftIdeas: chance.paragraph()
+  };
+  profileResponse: any;
 
-  // @when(/a valid create and join request is made/)
-  // public async createAndJoinGroup() {
-  //   const params = {
-  //     url: `${URL}/users/${this.sharedState.userId}/groups`,
-  //     method: 'post',
-  //     simple: false,
-  //     body: JSON.stringify(this.groupRequest)
-  //   };
-  //   const groupResponse = JSON.parse(await post(params));
-  //   this.groupResponse = groupResponse;
-  //   this.sharedState.groupId = groupResponse.groupId;
-  // }
+  @when(/a valid update profile request is made/, null, TIMEOUT)
+  public async update() {
+    const params = {
+      url: `${URL}/groups/${this.sharedState.groupId}/users/${this.sharedState.userId}/profile`,
+      method: 'post',
+      simple: false,
+      body: JSON.stringify(this.profileRequest)
+    };
+    const profileResponse = JSON.parse(await post(params));
+    this.profileResponse = profileResponse;
+  }
 
-  // @then(/the API response will include the new group/)
-  // public validateCreateAndJoin() {
-  //   expect(this.groupResponse).to.not.equal(undefined);
-  //   expect(this.groupResponse.groupId).to.match(
-  //     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-  //   );
-  //   expect(this.groupResponse.name).to.equal(this.groupRequest.name);
-  // }
+  @then(/the API response will include the updated profile information/)
+  public validateUpdate() {
+    expect(this.profileResponse).to.not.equal(undefined);
+    expect(this.profileResponse.name).to.equal(this.profileRequest.name);
+    expect(this.profileResponse.giftIdeas).to.equal(this.profileRequest.giftIdeas);
+    expect(this.profileResponse.address).to.equal(this.profileRequest.address);
+  }
 }

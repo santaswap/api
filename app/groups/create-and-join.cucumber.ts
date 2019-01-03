@@ -7,6 +7,7 @@ import { getDeployedUrl, SharedState } from '@manwaring/serverless-test-helper';
 const chance = new Chance();
 const URL = getDeployedUrl();
 const TEST_NAME_PREFIX = 'TEST_GROUP';
+const TIMEOUT = 10000;
 
 @binding([SharedState])
 export class CreateAndJoinGroup {
@@ -15,7 +16,7 @@ export class CreateAndJoinGroup {
   groupRequest = { name: `${TEST_NAME_PREFIX}: ${chance.last()} family` };
   groupResponse: any;
 
-  @when(/a valid create and join request is made/)
+  @when(/a valid create and join request is made/, null, TIMEOUT)
   public async createAndJoinGroup() {
     const params = {
       url: `${URL}/users/${this.sharedState.userId}/groups`,

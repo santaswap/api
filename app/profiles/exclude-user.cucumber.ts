@@ -1,39 +1,35 @@
 import { binding, given, when, then, after } from 'cucumber-tsflow';
 import { expect } from 'chai';
 import { post } from 'request-promise';
-import { Chance } from 'chance';
 import { getDeployedUrl, SharedState } from '@manwaring/serverless-test-helper';
 
-const chance = new Chance();
 const URL = getDeployedUrl();
-const TEST_NAME_PREFIX = 'TEST_GROUP';
+const TIMEOUT = 10000;
 
 @binding([SharedState])
-export class CreateAndJoinGroup {
+export class ExcludeUser {
   constructor(protected sharedState: SharedState) {}
 
-  groupRequest = { name: `${TEST_NAME_PREFIX}: ${chance.last()} family` };
-  groupResponse: any;
+  exclusionResponse: any;
 
-  // @when(/a valid create and join request is made/)
-  // public async createAndJoinGroup() {
-  //   const params = {
-  //     url: `${URL}/users/${this.sharedState.userId}/groups`,
-  //     method: 'post',
-  //     simple: false,
-  //     body: JSON.stringify(this.groupRequest)
-  //   };
-  //   const groupResponse = JSON.parse(await post(params));
-  //   this.groupResponse = groupResponse;
-  //   this.sharedState.groupId = groupResponse.groupId;
-  // }
+  @when(/a valid exclude user request is made/, null, TIMEOUT)
+  public async exclude() {
+    const params = {
+      url: `${URL}/groups/${this.sharedState.groupId}/users/${this.sharedState.userId}/excludedUsers/${
+        this.sharedState.anotherUserId
+      }`,
+      method: 'post',
+      simple: false
+    };
+    const exclusionResponse = JSON.parse(await post(params));
+    this.exclusionResponse = exclusionResponse;
+  }
 
-  // @then(/the API response will include the new group/)
-  // public validateCreateAndJoin() {
-  //   expect(this.groupResponse).to.not.equal(undefined);
-  //   expect(this.groupResponse.groupId).to.match(
-  //     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-  //   );
-  //   expect(this.groupResponse.name).to.equal(this.groupRequest.name);
-  // }
+  @then(/the API response will include the exclusion/)
+  public validateExclusion() {
+    expect(this.exclusionResponse).to.not.equal(undefined);
+    expect(this.exclusionResponse.groupId).to.equal(this.sharedState.groupId);
+    expect(this.exclusionResponse.excludedUserIds).to.contain(this.sharedState.anotherUserId);
+    // TODO make sure user id matches
+  }
 }
