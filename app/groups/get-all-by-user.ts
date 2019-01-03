@@ -1,7 +1,7 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { ProfileResponse } from './profile';
-import { BasicGroupResponse } from './group';
+import { ProfileResponse, ProfileRecord, PROFILE_TYPE_PREFIX } from './profile';
+import { BasicGroupResponse, GroupRecord, GROUP_TYPE_PREFIX } from './group';
 
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
@@ -14,10 +14,10 @@ export const handler = apiWrapper(async ({ path, success, error }: ApiSignature)
   }
 });
 
-async function getAllGroupsByUser(userId: string): Promise<any> {
-  const userProfiles = await getProfiles(userId);
-  console.log('Found user profiles', userProfiles);
-  const [...groups] = await Promise.all(userProfiles.map(up => getGroupAndMembers(up.groupId)));
+async function getAllGroupsByUser(userId: string): Promise<BasicGroupResponse[]> {
+  const profiles = await getProfiles(userId);
+  console.log('Found profiles', profiles);
+  const [...groups] = await Promise.all(profiles.map(profile => getGroupAndMembers(profile.groupId)));
   console.log('Found groups', groups);
   return groups;
 }
@@ -28,9 +28,9 @@ export function getProfiles(userId: string): Promise<ProfileResponse[]> {
     IndexName: process.env.GROUPS_TABLE_TYPE_INDEX,
     KeyConditionExpression: '#type = :type',
     ExpressionAttributeNames: { '#type': 'type' },
-    ExpressionAttributeValues: { ':type': `USER:${userId}` }
+    ExpressionAttributeValues: { ':type': `${PROFILE_TYPE_PREFIX}${userId}` }
   };
-  console.log('Getting all user profiles by user with params', params);
+  console.log('Getting all profiles by user with params', params);
   return groups
     .query(params)
     .promise()
@@ -43,7 +43,7 @@ export function getProfiles(userId: string): Promise<ProfileResponse[]> {
     );
 }
 
-function getGroupAndMembers(groupId: string): Promise<any> {
+async function getGroupAndMembers(groupId: string): Promise<BasicGroupResponse> {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     KeyConditionExpression: '#groupId = :groupId',
@@ -51,19 +51,13 @@ function getGroupAndMembers(groupId: string): Promise<any> {
     ExpressionAttributeValues: { ':groupId': `${groupId}` }
   };
   console.log('Getting group and members with params', params);
-  let group: BasicGroupResponse;
-  return groups
+  const items = await groups
     .query(params)
     .promise()
-    .then(res => res.Items)
-    .then(items => {
-      group = <BasicGroupResponse>items.find(item => item.type.indexOf('GROUP') > -1);
-      group.members = [];
-      items
-        .filter(item => item.type && item.type.indexOf('USER') > -1)
-        .forEach(user => {
-          group.members.push(user.name);
-        });
-    })
-    .then(() => group);
+    .then(res => res.Items);
+  const group = new GroupRecord(items.find(item => item.type.indexOf(GROUP_TYPE_PREFIX) > -1));
+  const profiles = items
+    .filter(item => item.type && item.type.indexOf(PROFILE_TYPE_PREFIX) > -1)
+    .map(item => new ProfileRecord(item));
+  return new BasicGroupResponse(group, profiles);
 }

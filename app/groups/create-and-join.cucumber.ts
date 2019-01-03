@@ -27,14 +27,19 @@ export class CreateAndJoinGroup {
     const groupResponse = JSON.parse(await post(params));
     this.groupResponse = groupResponse;
     this.sharedState.groupId = groupResponse.groupId;
+    this.sharedState.groupRequest = this.groupRequest;
+    this.sharedState.groupResponse = groupResponse;
   }
 
   @then(/the API response will include the new group/)
   public validateCreateAndJoin() {
-    expect(this.groupResponse).to.not.equal(undefined);
+    // Make sure the id matches uuid pattern
     expect(this.groupResponse.groupId).to.match(
       /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
     );
     expect(this.groupResponse.name).to.equal(this.groupRequest.name);
+    expect(this.groupResponse.code).to.be.a('string');
+    expect(this.groupResponse.members).to.have.members([this.sharedState.userRequest.name]);
+    expect(this.groupResponse).to.have.all.keys('groupId', 'name', 'code', 'members');
   }
 }

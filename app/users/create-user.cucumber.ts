@@ -26,13 +26,18 @@ export class CreateUser {
     };
     const userResponse = JSON.parse(await post(params));
     this.userResponse = userResponse;
+    this.sharedState.userRequest = this.userRequest;
+    this.sharedState.userResponse = userResponse;
     this.sharedState.userId = userResponse.userId;
   }
 
   @then(/the API response will include the new user/)
   public validateUser() {
-    expect(this.userResponse).to.not.equal(undefined);
-    expect(this.userResponse.userId).to.not.equal(undefined);
+    // Make sure the id matches uuid pattern
+    expect(this.userResponse.userId).to.match(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+    );
     expect(this.userResponse.name).to.equal(this.userRequest.name);
+    expect(this.userResponse).to.have.all.keys('userId', 'name');
   }
 }

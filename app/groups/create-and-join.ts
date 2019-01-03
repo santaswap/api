@@ -47,12 +47,12 @@ function getUser(userId: string): Promise<UserRecord> {
     .then(res => <UserRecord>res.Item);
 }
 
-async function saveProfile(userProfile: CreateProfileRequest): Promise<ProfileRecord> {
+async function saveProfile(profile: CreateProfileRequest): Promise<ProfileRecord> {
   const params = {
     TableName: process.env.GROUPS_TABLE,
-    Item: userProfile
+    Item: profile
   };
-  console.log('Creating new user profile with params', params);
+  console.log('Creating new profile with params', params);
   await groups.put(params).promise();
-  return <ProfileRecord>userProfile;
+  return new ProfileRecord(profile);
 }

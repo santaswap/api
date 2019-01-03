@@ -1,7 +1,7 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { GroupRecord, DetailedGroupResponse } from './group';
-import { ProfileResponse } from './profile';
+import { GroupRecord, DetailedGroupResponse, GROUP_TYPE_PREFIX } from './group';
+import { ProfileResponse, PROFILE_TYPE_PREFIX } from './profile';
 
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
@@ -30,14 +30,14 @@ async function getDetailedGroupByUser(userId: string, groupId: string): Promise<
     .promise()
     .then(res => res.Items)
     .then(items => {
-      group = <GroupRecord>items.find(item => item.type.indexOf('GROUP') > -1);
+      group = <GroupRecord>items.find(item => item.type.indexOf(GROUP_TYPE_PREFIX) > -1);
       delete group.type;
       items
-        .filter(item => item.type && item.type.indexOf('USER') > -1)
+        .filter(item => item.type && item.type.indexOf(PROFILE_TYPE_PREFIX) > -1)
         .forEach(user => {
           console.log('Seeing if user profile is of user or member', user);
           delete user.groupId;
-          user.userId = user.type.split('USER:')[1];
+          user.userId = user.type.split(PROFILE_TYPE_PREFIX)[1];
           delete user.type;
           if (user.userId !== `${userId}`) {
             delete user.excludedUserIds;

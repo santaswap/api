@@ -1,15 +1,37 @@
 import { GroupRecord } from './group';
 import { User } from './user';
 
-const USER_TYPE_PREFIX = 'USER:';
+export const PROFILE_TYPE_PREFIX = 'USER:';
 
-export interface ProfileRecord {
+export class ProfileRecord {
   groupId: string;
   userId: string;
+  type: string;
   name: string;
   giftIdeas?: string;
   targetUserId?: string;
   excludedUserIds?: string[];
+
+  constructor(record: any) {
+    this.groupId = record.groupId;
+    this.userId = record.userId;
+    this.type = record.type;
+    this.name = record.name;
+    this.giftIdeas = record.giftIdeas;
+    this.targetUserId = record.targetUserId;
+    this.excludedUserIds = record.excludedUserIds;
+  }
+
+  getProfileResponse(): ProfileResponse {
+    return {
+      groupId: this.groupId,
+      userId: this.userId,
+      name: this.name,
+      giftIdeas: this.giftIdeas,
+      targetUserId: this.targetUserId,
+      excludedUserIds: this.excludedUserIds
+    };
+  }
 }
 
 export class ProfileResponse {
@@ -37,6 +59,6 @@ export class CreateProfileRequest {
     this.groupId = group.groupId;
     this.created = new Date().toUTCString();
     this.name = user.name;
-    this.type = `${USER_TYPE_PREFIX}${user.userId}`;
+    this.type = `${PROFILE_TYPE_PREFIX}${user.userId}`;
   }
 }

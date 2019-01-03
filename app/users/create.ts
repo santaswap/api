@@ -1,6 +1,6 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { CreateUserRequest } from './create-user-request';
+import { CreateUserRequest, UserResponse } from './user';
 
 const users = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
@@ -15,12 +15,12 @@ export const handler = apiWrapper(async ({ body, success, error }: ApiSignature)
   }
 });
 
-async function saveUser(user: CreateUserRequest): Promise<CreateUserRequest> {
+async function saveUser(user: CreateUserRequest): Promise<UserResponse> {
   const params = {
     TableName: process.env.USERS_TABLE,
     Item: user
   };
   console.log('Creating new user with params', params);
   await users.put(params).promise();
-  return user;
+  return new UserResponse(user);
 }

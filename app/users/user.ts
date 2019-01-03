@@ -11,3 +11,13 @@ export class CreateUserRequest {
     this.name = name;
   }
 }
+
+export class UserResponse {
+  userId: string;
+  name: string;
+
+  constructor(user: any) {
+    this.userId = user.userId;
+    this.name = user.name;
+  }
+}

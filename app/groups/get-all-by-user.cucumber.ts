@@ -25,9 +25,12 @@ export class CreateAndJoinGroup {
 
   @then(/the API response will include basic group responses/)
   public validateCreateAndJoin() {
-    expect(this.groupsResponse).to.not.equal(undefined);
     expect(this.groupsResponse.length).to.equal(1);
     const group = this.groupsResponse[0];
     expect(group.groupId).to.equal(this.sharedState.groupId);
+    expect(group.name).to.equal(this.sharedState.groupRequest.name);
+    expect(group.code).to.equal(this.sharedState.groupResponse.code);
+    expect(group.members).to.have.members([this.sharedState.userRequest.name]);
+    expect(group).to.have.all.keys('groupId', 'name', 'code', 'members');
   }
 }

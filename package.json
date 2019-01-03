@@ -17,6 +17,7 @@
     "@iopipe/iopipe": "^1.11.1",
     "@iopipe/logger": "^1.2.0",
     "@manwaring/lambda-wrapper": "^0.1.6",
+    "chance": "^1.0.18",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
@@ -27,7 +28,6 @@
     "@types/node": "^8.0.57",
     "@types/request-promise": "^4.1.42",
     "chai": "^4.2.0",
-    "chance": "^1.0.18",
     "cucumber": "^5.1.0",
     "cucumber-tsflow": "^3.2.0",
     "git-rev-sync": "^1.12.0",
