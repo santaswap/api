@@ -70,7 +70,7 @@ paths:
     get:
       tags:
         - Group setup
-      summary: Get groups by users
+      summary: Get groups by user
       description: Gets all groups that a user has been added to
       consumes:
         - application/json
