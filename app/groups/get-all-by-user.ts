@@ -2,6 +2,7 @@ import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { DetailedProfileResponse, ProfileRecord, PROFILE_TYPE_PREFIX } from './profile';
 import { BasicGroupResponse, GroupRecord, GROUP_TYPE_PREFIX } from './group';
+import { EXCLUSION_TYPE_PREFIX } from '../profiles/exclusion';
 
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
@@ -52,7 +53,9 @@ async function getGroupAndMembers(groupId: string): Promise<BasicGroupResponse> 
     .then(res => res.Items);
   const group = new GroupRecord(items.find(item => item.type.indexOf(GROUP_TYPE_PREFIX) > -1));
   const profiles = items
-    .filter(item => item.type && item.type.indexOf(PROFILE_TYPE_PREFIX) > -1)
+    .filter(
+      item => item.type && item.type.indexOf(PROFILE_TYPE_PREFIX) > -1 && item.type.indexOf(EXCLUSION_TYPE_PREFIX) < 0
+    )
     .map(item => new ProfileRecord(item));
   return new BasicGroupResponse(group, profiles);
 }
