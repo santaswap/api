@@ -222,16 +222,22 @@ definitions:
         type: string
       name:
         type: string
-        description: "User's name"
+        description: User's name
 
   ProfileResponse:
-    type: 'object'
+    type: object
     properties:
       userId:
-        type: 'string'
+        type: string
       name:
-        type: 'string'
+        type: string
         description: User's name
+      address:
+        type: string
+        description: Address for shipping this user's gifts to
+      giftIdeas:
+        type: string
+        description: Gift ideas for what to get this user
       excludedUserIds:
         type: array
         description: IDs of users this user doesn't want to be assigned as secret santa for
@@ -287,21 +293,9 @@ definitions:
         type: string
         description: Name of the group
       profile:
-        $ref: '#/definitions/Profile'
+        $ref: '#/definitions/ProfileResponse'
       members:
         type: array
         description: Names of the people in the group
         items:
           $ref: '#/definitions/UserResponse'
-
-  Profile:
-    type: object
-    properties:
-      profileId:
-        type: string
-      name:
-        type: string
-      excludedUserIds:
-        type: array
-        items:
-          type: string

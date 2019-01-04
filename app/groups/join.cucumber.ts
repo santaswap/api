@@ -29,7 +29,7 @@ export class JoinGroup {
     this.sharedState.anotherUserId = userResponse.userId;
   }
 
-  @when(/a valid join request is made/)
+  @when(/a valid join request is made/, null, TIMEOUT)
   public async joinGroup() {
     const params = {
       url: `${URL}/groups/${this.sharedState.groupId}/users/${this.sharedState.anotherUserId}`,

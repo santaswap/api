@@ -50,14 +50,14 @@ export class DetailedGroupResponse {
   name: string;
   code: string;
   members: ProfileResponse[];
-  userProfile: ProfileResponse;
+  profile: ProfileResponse;
 
-  constructor(group: GroupRecord, userProfiles: ProfileResponse[], userProfile: ProfileResponse) {
+  constructor(group: GroupRecord, userProfiles: ProfileResponse[], profile: ProfileResponse) {
     this.groupId = group.groupId;
     this.name = group.name;
     this.code = group.code;
-    this.userProfile = userProfile;
-    this.members = userProfiles.filter(up => up.userId !== userProfile.userId);
+    this.profile = profile;
+    this.members = userProfiles;
   }
 }
 

@@ -4,7 +4,6 @@ Feature: Group management
     Given a valid user create request is made
     When a valid create and join request is made
     Then the API response will include the new group
-    # TODO check for member names on group
   
   Scenario: Get all groups by user
     Given a valid user create request is made

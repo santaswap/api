@@ -26,9 +26,15 @@ export class CreateAndJoinGroup {
 
   @then(/the API response will include the detailed group response/)
   public validateCreateAndJoin() {
-    expect(this.groupResponse).to.not.equal(undefined);
-    expect(this.groupResponse.groupId).to.match(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-    );
+    expect(this.groupResponse.groupId).to.equal(this.sharedState.groupId);
+    expect(this.groupResponse.name).to.equal(this.sharedState.groupRequest.name);
+    expect(this.groupResponse.code).to.be.a('string');
+    expect(this.groupResponse.members).to.be.an('array');
+    expect(this.groupResponse).to.have.all.keys('groupId', 'name', 'code', 'members', 'profile');
+    const profile = this.groupResponse.profile;
+    expect(profile.userId).to.equal(this.sharedState.userId);
+    expect(profile.name).to.equal(this.sharedState.userRequest.name);
+    expect(profile.excludedUserIds).to.be.an('array');
+    expect(profile).to.have.all.keys(['groupId', 'userId', 'giftIdeas', 'address', 'name', 'excludedUserIds']);
   }
 }

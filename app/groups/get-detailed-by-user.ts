@@ -1,7 +1,7 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { GroupRecord, DetailedGroupResponse, GROUP_TYPE_PREFIX } from './group';
-import { ProfileResponse, PROFILE_TYPE_PREFIX } from './profile';
+import { ProfileResponse, ProfileRecord, PROFILE_TYPE_PREFIX } from './profile';
 
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
@@ -22,33 +22,16 @@ async function getDetailedGroupByUser(userId: string, groupId: string): Promise<
     ExpressionAttributeValues: { ':groupId': `${groupId}` }
   };
   console.log('Getting group detail and members with params', params);
-  let group: GroupRecord;
-  let members: ProfileResponse[] = [];
-  let userProfile: ProfileResponse;
-  return groups
+  const items = await groups
     .query(params)
     .promise()
-    .then(res => res.Items)
-    .then(items => {
-      group = <GroupRecord>items.find(item => item.type.indexOf(GROUP_TYPE_PREFIX) > -1);
-      delete group.type;
-      items
-        .filter(item => item.type && item.type.indexOf(PROFILE_TYPE_PREFIX) > -1)
-        .forEach(user => {
-          console.log('Seeing if user profile is of user or member', user);
-          delete user.groupId;
-          user.userId = user.type.split(PROFILE_TYPE_PREFIX)[1];
-          delete user.type;
-          if (user.userId !== `${userId}`) {
-            delete user.excludedUserIds;
-            console.log('Found a member', user);
-            members.push(<ProfileResponse>user);
-          } else {
-            user.excludedUserIds = user.excludedUserIds ? user.excludedUserIds.values : [];
-            console.log('Found the user', user);
-            userProfile = <ProfileResponse>user;
-          }
-        });
-    })
-    .then(() => new DetailedGroupResponse(group, members, userProfile));
+    .then(res => res.Items);
+  const group = new GroupRecord(items.find(item => item.type.indexOf(GROUP_TYPE_PREFIX) > -1));
+  const profile = new ProfileRecord(
+    items.find(item => item.type.indexOf(PROFILE_TYPE_PREFIX) > -1 && item.userId === userId)
+  ).getProfileResponse();
+  const profiles = items
+    .filter(item => item.type.indexOf(PROFILE_TYPE_PREFIX) > -1 && item.userId !== userId)
+    .map(item => new ProfileRecord(item).getProfileResponse());
+  return new DetailedGroupResponse(group, profiles, profile);
 }
