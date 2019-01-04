@@ -1,35 +1,44 @@
 import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
-import { ProfileResponse } from './profile-response';
+import { ProfileRecord, DetailedProfileResponse, PROFILE_TYPE_PREFIX } from '../groups/profile';
+import { CreateExclusionRequest, EXCLUSION_TYPE_PREFIX } from './exclusion';
 
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
-export const handler = apiWrapper(async ({ body, path, success, error }: ApiSignature) => {
+export const handler = apiWrapper(async ({ path, testRequest, success, error }: ApiSignature) => {
   try {
-    const response = await excludeUser(path.groupId, path.userId, path.excludedUserId);
-    success(response);
+    await excludeUser(path.groupId, path.userId, path.excludedUserId, testRequest);
+    const profile = await getProfile(path.groupId, path.userId);
+    success(profile);
   } catch (err) {
     error(err);
   }
 });
 
-async function excludeUser(groupId: string, userId: string, excludedUserId: string): Promise<ProfileResponse> {
+async function excludeUser(groupId: string, userId: string, excludedUserId: string, testRequest: boolean) {
   const params = {
     TableName: process.env.GROUPS_TABLE,
-    Key: { groupId, type: `USER:${userId}` },
-    UpdateExpression: 'ADD #excludedUserIds :excludedUserId',
-    ExpressionAttributeNames: { '#excludedUserIds': 'excludedUserIds' },
-    ExpressionAttributeValues: { ':excludedUserId': groups.createSet([excludedUserId]) },
-    ReturnValues: 'ALL_NEW'
+    Item: new CreateExclusionRequest(groupId, userId, excludedUserId, testRequest)
   };
   console.log('Excluding user with params', params);
-  return groups
-    .update(params)
+  await groups.put(params).promise();
+}
+
+async function getProfile(groupId: string, userId: string): Promise<DetailedProfileResponse> {
+  const params = {
+    TableName: process.env.GROUPS_TABLE,
+    KeyConditionExpression: '#groupId = :groupId and begins_with(#type, :type)',
+    ExpressionAttributeNames: { '#groupId': 'groupId', '#type': 'type' },
+    ExpressionAttributeValues: { ':groupId': `${groupId}`, ':type': `${PROFILE_TYPE_PREFIX}${userId}` }
+  };
+  console.log('Getting group detail and members with params', params);
+  const items = await groups
+    .query(params)
     .promise()
-    .then(res => res.Attributes)
-    .then(user => {
-      console.log('Received data from Dynamo', user);
-      user.excludedUserIds = user.excludedUserIds ? user.excludedUserIds.values : [];
-      return <ProfileResponse>user;
-    });
+    .then(res => res.Items);
+  const profileRecord = items.find(item => item.type === `${PROFILE_TYPE_PREFIX}${userId}`);
+  const exclusions = items.filter(
+    item => item.type.indexOf(`${PROFILE_TYPE_PREFIX}${userId}${EXCLUSION_TYPE_PREFIX}`) > -1
+  );
+  return new ProfileRecord(profileRecord, exclusions).getDetailedProfileResponse();
 }

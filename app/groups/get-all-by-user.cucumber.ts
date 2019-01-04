@@ -14,24 +14,30 @@ export class CreateAndJoinGroup {
 
   @when(/a valid get all groups by user request is made/, null, TIMEOUT)
   public async getAllGroups() {
+    const { createUserResponse: user } = this.sharedState;
     const params = {
-      url: `${URL}/users/${this.sharedState.userId}/groups`,
+      url: `${URL}/users/${user.userId}/groups`,
       method: 'get',
       simple: false,
       headers: { 'SantaSwap-Test-Request': true }
     };
-    const groupsResponse = JSON.parse(await get(params));
-    this.groupsResponse = groupsResponse;
+    this.sharedState.getAllGroupsResponse = JSON.parse(await get(params));
   }
 
   @then(/the API response will include basic group responses/)
   public validateCreateAndJoin() {
-    expect(this.groupsResponse.length).to.equal(1);
-    const group = this.groupsResponse[0];
-    expect(group.groupId).to.equal(this.sharedState.groupId);
-    expect(group.name).to.equal(this.sharedState.groupRequest.name);
-    expect(group.code).to.equal(this.sharedState.groupResponse.code);
-    expect(group.members).to.have.members([this.sharedState.userRequest.name]);
-    expect(group).to.have.all.keys('groupId', 'name', 'code', 'members');
+    const {
+      getAllGroupsResponse: response,
+      createAndJoinGroupResponse: group,
+      createUserResponse: user
+    } = this.sharedState;
+
+    expect(response.length).to.equal(1);
+    const responseGroup = response[0];
+    expect(responseGroup.groupId).to.equal(group.groupId);
+    expect(responseGroup.name).to.equal(group.name);
+    expect(responseGroup.code).to.equal(group.code);
+    expect(responseGroup.members).to.have.members([user.name]);
+    expect(responseGroup).to.have.all.keys('groupId', 'name', 'code', 'members');
   }
 }

@@ -16,17 +16,17 @@ export class ProfileRecord {
   recordExpiration: number;
   created: string;
 
-  constructor(record: any) {
+  constructor(record: any, exclusions?: any[]) {
     this.groupId = record.groupId;
     this.userId = record.userId;
     this.type = record.type;
     this.name = record.name;
     this.giftIdeas = record.giftIdeas;
     this.targetUserId = record.targetUserId;
-    this.excludedUserIds = record.excludedUserIds ? record.excludedUserIds : [];
     this.recordExpiration = record.recordExpiration;
     this.created = record.created;
     this.testRequest = record.testRequest;
+    this.excludedUserIds = exclusions ? exclusions.map(exclusion => exclusion.excludedUserId) : [];
   }
 
   getDetailedProfileResponse(): DetailedProfileResponse {

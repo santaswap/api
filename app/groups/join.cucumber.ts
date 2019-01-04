@@ -11,41 +11,48 @@ const TIMEOUT = 10000;
 
 @binding([SharedState])
 export class JoinGroup {
-  constructor(protected sharedState: SharedState) {}
+  constructor(protected sharedState: SharedState) {
+    sharedState.anotherCreateUserRequest = { name: `${TEST_NAME_PREFIX}: ${chance.name()}` };
+  }
 
-  userRequest = { name: `${TEST_NAME_PREFIX}: ${chance.name()}` };
   groupResponse: any;
 
   @when(/another valid user create request is made/, null, TIMEOUT)
   public async createAnotherUser() {
+    const { anotherCreateUserRequest: request } = this.sharedState;
     const params = {
       url: `${URL}/users`,
       method: 'post',
       simple: false,
-      body: JSON.stringify(this.userRequest),
+      body: JSON.stringify(request),
       headers: { 'SantaSwap-Test-Request': true }
     };
-    const userResponse = JSON.parse(await post(params));
-    this.sharedState.anotherUserId = userResponse.userId;
-    this.sharedState.anotherUserResponse = userResponse;
-    this.sharedState.anotherUserRequest = this.userRequest;
+    this.sharedState.createAnotherUserResponse = JSON.parse(await post(params));
   }
 
   @when(/a valid join request is made/, null, TIMEOUT)
   public async joinGroup() {
+    const { createAndJoinGroupResponse: group, createAnotherUserResponse: user } = this.sharedState;
     const params = {
-      url: `${URL}/groups/${this.sharedState.groupId}/users/${this.sharedState.anotherUserId}`,
+      url: `${URL}/groups/${group.groupId}/users/${user.userId}`,
       method: 'post',
       simple: false
     };
-    const groupResponse = JSON.parse(await post(params));
-    this.groupResponse = groupResponse;
-    this.sharedState.joinedGroupId = groupResponse.groupId;
+    this.sharedState.joinGroupResponse = JSON.parse(await post(params));
   }
 
   @then(/the API response will include the basic group response/)
   public validateJoin() {
-    expect(this.groupResponse).to.not.equal(undefined);
-    expect(this.groupResponse.groupId).to.equal(this.sharedState.groupId);
+    const {
+      createAndJoinGroupResponse: group,
+      joinGroupResponse: response,
+      anotherCreateUserRequest: user
+    } = this.sharedState;
+
+    expect(response.groupId).to.equal(group.groupId);
+    expect(response.name).to.equal(group.name);
+    expect(response.code).to.be.a('string');
+    expect(response.members).to.have.members([user.name]);
+    expect(response).to.have.all.keys(['groupId', 'name', 'code', 'members']);
   }
 }

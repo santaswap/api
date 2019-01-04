@@ -16,7 +16,7 @@
   "dependencies": {
     "@iopipe/iopipe": "^1.11.1",
     "@iopipe/logger": "^1.2.0",
-    "@manwaring/lambda-wrapper": "^0.1.10",
+    "@manwaring/lambda-wrapper": "^0.1.11",
     "chance": "^1.0.18",
     "uuid": "^3.3.2"
   },

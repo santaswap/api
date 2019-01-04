@@ -25,4 +25,3 @@ Feature: Group management
     When another valid user create request is made
     And a valid join request is made
     Then the API response will include the basic group response
-    # TODO check for member names on group

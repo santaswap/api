@@ -11,33 +11,36 @@ const TIMEOUT = 10000;
 
 @binding([SharedState])
 export class UpdateProfile {
-  constructor(protected sharedState: SharedState) {}
-
-  profileRequest = {
-    name: `${TEST_NAME_PREFIX}: ${chance.name()}`,
-    address: chance.address(),
-    giftIdeas: chance.paragraph()
-  };
-  profileResponse: any;
+  constructor(protected sharedState: SharedState) {
+    sharedState.updateProfileRequest = {
+      name: `${TEST_NAME_PREFIX}: ${chance.name()}`,
+      address: chance.address(),
+      giftIdeas: chance.paragraph()
+    };
+  }
 
   @when(/a valid update profile request is made/, null, TIMEOUT)
   public async update() {
+    const {
+      updateProfileRequest: request,
+      createAndJoinGroupResponse: group,
+      createUserResponse: user
+    } = this.sharedState;
     const params = {
-      url: `${URL}/groups/${this.sharedState.groupId}/users/${this.sharedState.userId}/profile`,
+      url: `${URL}/groups/${group.groupId}/users/${user.userId}/profile`,
       method: 'post',
       simple: false,
-      body: JSON.stringify(this.profileRequest),
+      body: JSON.stringify(request),
       headers: { 'SantaSwap-Test-Request': true }
     };
-    const profileResponse = JSON.parse(await post(params));
-    this.profileResponse = profileResponse;
+    this.sharedState.updateProfileResponse = JSON.parse(await post(params));
   }
 
   @then(/the API response will include the updated profile information/)
   public validateUpdate() {
-    expect(this.profileResponse).to.not.equal(undefined);
-    expect(this.profileResponse.name).to.equal(this.profileRequest.name);
-    expect(this.profileResponse.giftIdeas).to.equal(this.profileRequest.giftIdeas);
-    expect(this.profileResponse.address).to.equal(this.profileRequest.address);
+    const { updateProfileResponse: response, updateProfileRequest: request } = this.sharedState;
+    expect(response.name).to.equal(request.name);
+    expect(response.giftIdeas).to.equal(request.giftIdeas);
+    expect(response.address).to.equal(request.address);
   }
 }

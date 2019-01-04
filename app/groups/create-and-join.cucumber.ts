@@ -11,36 +11,36 @@ const TIMEOUT = 10000;
 
 @binding([SharedState])
 export class CreateAndJoinGroup {
-  constructor(protected sharedState: SharedState) {}
-
-  groupRequest = { name: `${TEST_NAME_PREFIX}: ${chance.last()} family` };
-  groupResponse: any;
+  constructor(protected sharedState: SharedState) {
+    sharedState.createAndJoinGroupRequest = { name: `${TEST_NAME_PREFIX}: ${chance.last()} family` };
+  }
 
   @when(/a valid create and join request is made/, null, TIMEOUT)
   public async createAndJoinGroup() {
+    const { createUserResponse: user, createAndJoinGroupRequest: request } = this.sharedState;
     const params = {
-      url: `${URL}/users/${this.sharedState.userId}/groups`,
+      url: `${URL}/users/${user.userId}/groups`,
       method: 'post',
       simple: false,
-      body: JSON.stringify(this.groupRequest),
+      body: JSON.stringify(request),
       headers: { 'SantaSwap-Test-Request': true }
     };
-    const groupResponse = JSON.parse(await post(params));
-    this.groupResponse = groupResponse;
-    this.sharedState.groupId = groupResponse.groupId;
-    this.sharedState.groupRequest = this.groupRequest;
-    this.sharedState.groupResponse = groupResponse;
+    this.sharedState.createAndJoinGroupResponse = JSON.parse(await post(params));
   }
 
   @then(/the API response will include the new group/)
   public validateCreateAndJoin() {
+    const {
+      createAndJoinGroupRequest: request,
+      createAndJoinGroupResponse: response,
+      createUserResponse: user
+    } = this.sharedState;
+
     // Make sure the id matches uuid pattern
-    expect(this.groupResponse.groupId).to.match(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-    );
-    expect(this.groupResponse.name).to.equal(this.groupRequest.name);
-    expect(this.groupResponse.code).to.be.a('string');
-    expect(this.groupResponse.members).to.have.members([this.sharedState.userRequest.name]);
-    expect(this.groupResponse).to.have.all.keys('groupId', 'name', 'code', 'members');
+    expect(response.groupId).to.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+    expect(response.name).to.equal(request.name);
+    expect(response.code).to.be.a('string');
+    expect(response.members).to.have.members([user.name]);
+    expect(response).to.have.all.keys('groupId', 'name', 'code', 'members');
   }
 }
