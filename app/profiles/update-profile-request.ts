@@ -1,4 +1,4 @@
-const PROFILE_TYPE_PREFIX = 'PROFILE:';
+const PROFILE_TYPE_PREFIX = 'USER:';
 
 export class UpdateProfileRequest {
   groupId: string;

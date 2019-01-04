@@ -38,9 +38,17 @@ export class UpdateProfile {
 
   @then(/the API response will include the updated profile information/)
   public validateUpdate() {
-    const { updateProfileResponse: response, updateProfileRequest: request } = this.sharedState;
+    const {
+      updateProfileResponse: response,
+      updateProfileRequest: request,
+      createUserResponse: user,
+      createAnotherUserResponse: anotherUser
+    } = this.sharedState;
+    expect(response.userId).to.equal(user.userId);
     expect(response.name).to.equal(request.name);
     expect(response.giftIdeas).to.equal(request.giftIdeas);
     expect(response.address).to.equal(request.address);
+    expect(response.excludedUserIds).to.be.an('array');
+    expect(response).to.have.all.keys('userId', 'name', 'address', 'giftIdeas', 'excludedUserIds');
   }
 }

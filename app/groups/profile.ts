@@ -22,6 +22,7 @@ export class ProfileRecord {
     this.type = record.type;
     this.name = record.name;
     this.giftIdeas = record.giftIdeas;
+    this.address = record.address;
     this.targetUserId = record.targetUserId;
     this.recordExpiration = record.recordExpiration;
     this.created = record.created;
