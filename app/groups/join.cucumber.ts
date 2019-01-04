@@ -27,6 +27,8 @@ export class JoinGroup {
     };
     const userResponse = JSON.parse(await post(params));
     this.sharedState.anotherUserId = userResponse.userId;
+    this.sharedState.anotherUserResponse = userResponse;
+    this.sharedState.anotherUserRequest = this.userRequest;
   }
 
   @when(/a valid join request is made/, null, TIMEOUT)

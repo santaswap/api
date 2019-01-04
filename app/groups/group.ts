@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
 import { Chance } from 'chance';
-import { ProfileRecord, ProfileResponse } from './profile';
+import { ProfileRecord, DetailedProfileResponse, BasicProfileResponse } from './profile';
 
 export const GROUP_TYPE_PREFIX = 'GROUP';
 const chance = new Chance();
@@ -49,10 +49,10 @@ export class DetailedGroupResponse {
   groupId: string;
   name: string;
   code: string;
-  members: ProfileResponse[];
-  profile: ProfileResponse;
+  members: BasicProfileResponse[];
+  profile: DetailedProfileResponse;
 
-  constructor(group: GroupRecord, userProfiles: ProfileResponse[], profile: ProfileResponse) {
+  constructor(group: GroupRecord, userProfiles: BasicProfileResponse[], profile: DetailedProfileResponse) {
     this.groupId = group.groupId;
     this.name = group.name;
     this.code = group.code;

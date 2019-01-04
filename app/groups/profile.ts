@@ -29,9 +29,8 @@ export class ProfileRecord {
     this.testRequest = record.testRequest;
   }
 
-  getProfileResponse(): ProfileResponse {
+  getDetailedProfileResponse(): DetailedProfileResponse {
     return {
-      groupId: this.groupId,
       userId: this.userId,
       name: this.name,
       giftIdeas: this.giftIdeas ? this.giftIdeas : '',
@@ -40,18 +39,27 @@ export class ProfileRecord {
       excludedUserIds: this.excludedUserIds
     };
   }
+
+  getBasicProfileResponse(): BasicProfileResponse {
+    return {
+      userId: this.userId,
+      name: this.name
+    };
+  }
 }
 
-export class ProfileResponse {
-  groupId: string;
+export interface DetailedProfileResponse {
   userId: string;
   name: string;
   giftIdeas: string;
   address: string;
   targetUserId: string;
   excludedUserIds: string[];
+}
 
-  constructor() {}
+export interface BasicProfileResponse {
+  userId: string;
+  name: string;
 }
 
 export class CreateProfileRequest {

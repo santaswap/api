@@ -26,15 +26,24 @@ export class CreateAndJoinGroup {
 
   @then(/the API response will include the detailed group response/)
   public validateCreateAndJoin() {
+    // Validate group details
     expect(this.groupResponse.groupId).to.equal(this.sharedState.groupId);
     expect(this.groupResponse.name).to.equal(this.sharedState.groupRequest.name);
     expect(this.groupResponse.code).to.be.a('string');
-    expect(this.groupResponse.members).to.be.an('array');
     expect(this.groupResponse).to.have.all.keys('groupId', 'name', 'code', 'members', 'profile');
+
+    // Validate profile details
     const profile = this.groupResponse.profile;
     expect(profile.userId).to.equal(this.sharedState.userId);
     expect(profile.name).to.equal(this.sharedState.userRequest.name);
     expect(profile.excludedUserIds).to.be.an('array');
-    expect(profile).to.have.all.keys(['groupId', 'userId', 'giftIdeas', 'address', 'name', 'excludedUserIds']);
+    expect(profile).to.have.all.keys(['userId', 'giftIdeas', 'address', 'name', 'excludedUserIds']);
+
+    // Validate member details
+    expect(this.groupResponse.members).to.be.an('array');
+    expect(this.groupResponse.members.length).to.equal(1);
+    const member = this.groupResponse.members[0];
+    expect(member.userId).to.equal(this.sharedState.anotherUserId);
+    expect(member.name).to.equal(this.sharedState.anotherUserRequest.name);
   }
 }
