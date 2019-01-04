@@ -46,7 +46,8 @@ custom:
   # Stupdily named (and stupidly not namespaced) property for the stack output serverless plugin
   output: { file: infrastructure/.stack-outputs.yml }
   customDomain:
-    basePath: ${self:custom.stageProperties.${opt:stage, self:provider.stage}.basePath, self:custom.stageProperties.default.basePath}
+    # basePath: ${self:custom.stageProperties.${opt:stage, self:provider.stage}.basePath, self:custom.stageProperties.default.basePath}
+    stage: ${opt:stage, self:provider.stage}
     domainName: api.santaswap.io
     certificateName: '*.santaswap.io'
     enabled: ${self:custom.stageProperties.${opt:stage, self:provider.stage}.enabled, self:custom.stageProperties.default.enabled}
