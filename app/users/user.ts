@@ -3,14 +3,18 @@ import { v4 } from 'uuid';
 export class CreateUserRequest {
   userId: string;
   name: string;
+  email: string;
+  pictureUrl: string;
   created: string;
   testRequest: boolean;
   recordExpiration: number;
 
-  constructor(name: string, testRequest: boolean) {
-    this.userId = v4();
+  constructor(body: any, testRequest: boolean) {
+    this.userId = body.userId ? body.userId : v4();
     this.created = new Date().toUTCString();
-    this.name = name;
+    this.name = body.name;
+    this.email = body.email;
+    this.pictureUrl = body.pictureUrl;
     this.testRequest = testRequest;
     if (testRequest) {
       const MINUTES_TO_LIVE = 30;
@@ -23,9 +27,13 @@ export class CreateUserRequest {
 export class UserResponse {
   userId: string;
   name: string;
+  pictureUrl: string;
+  email: string;
 
   constructor(user: any) {
     this.userId = user.userId;
     this.name = user.name;
+    this.pictureUrl = user.pictureUrl;
+    this.email = user.email;
   }
 }

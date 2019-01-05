@@ -6,8 +6,7 @@ const users = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
 export const handler = apiWrapper(async ({ body, testRequest, success, error }: ApiSignature) => {
   try {
-    const { name } = body;
-    const userToSave = new CreateUserRequest(name, testRequest);
+    const userToSave = new CreateUserRequest(body, testRequest);
     const user = await saveUser(userToSave);
     success(user);
   } catch (err) {

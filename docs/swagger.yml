@@ -211,6 +211,13 @@ definitions:
   NewUserRequest:
     type: object
     properties:
+      userId:
+        type: string
+      pictureUrl:
+        type: string
+        description: URL of the user's avatar
+      email:
+        type: string
       name:
         type: string
         description: User's name
@@ -223,6 +230,11 @@ definitions:
       name:
         type: string
         description: User's name
+      pictureUrl:
+        type: string
+        description: URL of the user's picture
+      email:
+        type: string
 
   ProfileResponse:
     type: object
