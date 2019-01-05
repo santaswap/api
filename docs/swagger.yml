@@ -146,7 +146,7 @@ paths:
         200:
           description: User successfully added to group
           schema:
-            $ref: '#/definitions/BasicGroupResponse'
+            $ref: '#/definitions/ProfileResponse'
 
   /groups/{groupId}/users/{userId}/excludedUsers/{excludedUserId}:
     post:

@@ -20,6 +20,9 @@ export const handler = apiWrapper(async ({ body, path, success, error }: ApiSign
 });
 
 async function updateProfile(request: UpdateProfileRequest) {
+  // TODO update to handle null fields coming in
+  // https://stackoverflow.com/questions/45842363/dynamodb-updateitem-ignore-null-values-in-expressionattributevalues
+  // Also add an updated at field which is always set
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Key: { groupId: request.groupId, type: request.type },
@@ -28,7 +31,7 @@ async function updateProfile(request: UpdateProfileRequest) {
     ExpressionAttributeValues: { ':name': request.name, ':address': request.address, ':giftIdeas': request.giftIdeas }
   };
   console.log('Updating profile with params', params);
-  const res = await groups.update(params).promise();
+  await groups.update(params).promise();
 }
 
 async function getProfile(groupId: string, userId: string): Promise<DetailedProfileResponse> {
