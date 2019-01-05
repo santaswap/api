@@ -16,6 +16,7 @@ export class CreateUserRequest {
     this.email = body.email;
     this.pictureUrl = body.pictureUrl;
     this.testRequest = testRequest;
+    console.log('test request', testRequest);
     if (testRequest) {
       const MINUTES_TO_LIVE = 30;
       const MILLISECONDS_TO_LIVE = MINUTES_TO_LIVE * 60 * 1000;
