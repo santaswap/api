@@ -25,3 +25,17 @@ export class CreateExclusionRequest {
     }
   }
 }
+
+export class ExclusionRecord {
+  groupId: string;
+  type: string;
+  userId: string;
+  excludedUserId: string;
+
+  constructor(record: any) {
+    this.groupId = record.groupId;
+    this.type = record.type;
+    this.userId = record.userId;
+    this.excludedUserId = record.excludedUserId;
+  }
+}

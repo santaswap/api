@@ -25,3 +25,11 @@ Feature: Group management
     When another valid user create request is made
     And a valid join request is made
     Then the API response will include the basic group response
+
+  Scenario: Match group
+    Given a valid user create request is made
+    And a valid create and join request is made
+    And another valid user create request is made
+    And a valid join request is made
+    When a valid match request is made
+    Then the API response will include the matched group response
