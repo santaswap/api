@@ -1,6 +1,6 @@
 import { binding, given, when, then, after } from 'cucumber-tsflow';
 import { expect } from 'chai';
-import { post } from 'request-promise';
+import { put } from 'request-promise';
 import { Chance } from 'chance';
 import { getDeployedUrl, SharedState } from '@manwaring/serverless-test-helper';
 
@@ -27,13 +27,13 @@ export class UpdateProfile {
       createUserResponse: user
     } = this.sharedState;
     const params = {
-      url: `${URL}/groups/${group.groupId}/users/${user.userId}/profile`,
+      url: `${URL}/groups/${group.groupId}/users/${user.userId}`,
       method: 'post',
       simple: false,
       body: JSON.stringify(request),
       headers: { 'SantaSwap-Test-Request': true }
     };
-    this.sharedState.updateProfileResponse = JSON.parse(await post(params));
+    this.sharedState.updateProfileResponse = JSON.parse(await put(params));
   }
 
   @then(/the API response will include the updated profile information/)
