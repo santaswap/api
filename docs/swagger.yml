@@ -115,12 +115,12 @@ paths:
           schema:
             $ref: '#/definitions/BasicGroupResponse'
 
-  /groups/{groupId}/users/{userId}/profile:
-    post:
+  /groups/{groupId}/users/{userId}:
+    put:
       tags:
         - Profile mgmt
       summary: Update user profile
-      description: Creates a new group and adds the specified user to that group
+      description: Update the specified user profile
       consumes:
         - application/json
       produces:

@@ -83,8 +83,8 @@ functions:
     handler: app/profiles/update-profile.handler
     events:
       - http:
-          method: post
-          path: groups/{groupId}/users/{userId}/profile
+          method: put
+          path: groups/{groupId}/users/{userId}
           cors: true
           request:
             parameters:
@@ -185,16 +185,5 @@ resources:
             KeySchema:
               - AttributeName: code
                 KeyType: HASH
-              # - AttributeName: groupId
-              #   KeyType: HASH
             Projection:
               ProjectionType: ALL
-        # LocalSecondaryIndexes:
-        #   - IndexName: GroupCodeIndex
-        #     KeySchema:
-        #       - AttributeName: code
-        #         KeyType: HASH
-        #       - AttributeName: groupId
-        #         KeyType: HASH
-        #     Projection:
-        #       ProjectionType: ALL
