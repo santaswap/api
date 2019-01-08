@@ -34,7 +34,7 @@ export class JoinGroup {
   public async joinGroup() {
     const { createAndJoinGroupResponse: group, createAnotherUserResponse: user } = this.sharedState;
     const params = {
-      url: `${URL}/groups/${group.groupId}/users/${user.userId}`,
+      url: `${URL}/groups/${group.code}/users/${user.userId}`,
       method: 'post',
       simple: false
     };

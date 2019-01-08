@@ -36,14 +36,17 @@ function getUser(userId: string): Promise<UserRecord> {
     .then(res => <UserRecord>res.Item);
 }
 
-async function getGroup(groupId: string): Promise<GroupRecord> {
+async function getGroup(code: string): Promise<GroupRecord> {
   const params = {
     TableName: process.env.GROUPS_TABLE,
-    Key: { groupId, type: `${GROUP_TYPE_PREFIX}` }
+    IndexName: process.env.GROUPS_TABLE_CODE_INDEX,
+    KeyConditionExpression: '#code = :code',
+    ExpressionAttributeNames: { '#code': 'code' },
+    ExpressionAttributeValues: { ':code': code }
   };
-  console.info('Getting group by groupId with params', params);
-  const res = await groups.get(params).promise();
-  return <GroupRecord>res.Item;
+  console.info('Getting group by code with params', params);
+  const res = await groups.query(params).promise();
+  return <GroupRecord>res.Items[0];
 }
 
 async function saveProfile(profile: CreateProfileRequest): Promise<ProfileRecord> {

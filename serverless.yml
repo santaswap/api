@@ -31,6 +31,7 @@ provider:
     IOPIPE_TOKEN: ${env:IOPIPE_TOKEN}
     GROUPS_TABLE: { Ref: GroupsTable }
     GROUPS_TABLE_TYPE_INDEX: TypeIndex
+    GROUPS_TABLE_CODE_INDEX: GroupCodeIndex
     USERS_TABLE: { Ref: UsersTable }
     REVISION: ${file(infrastructure/helper.js):revision}
     STAGE: ${opt:stage, self:provider.stage}
@@ -162,6 +163,8 @@ resources:
             AttributeType: S
           - AttributeName: type
             AttributeType: S
+          - AttributeName: code
+            AttributeType: S
         BillingMode: PAY_PER_REQUEST
         KeySchema:
           - AttributeName: groupId
@@ -178,3 +181,20 @@ resources:
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
+          - IndexName: GroupCodeIndex
+            KeySchema:
+              - AttributeName: code
+                KeyType: HASH
+              # - AttributeName: groupId
+              #   KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        # LocalSecondaryIndexes:
+        #   - IndexName: GroupCodeIndex
+        #     KeySchema:
+        #       - AttributeName: code
+        #         KeyType: HASH
+        #       - AttributeName: groupId
+        #         KeyType: HASH
+        #     Projection:
+        #       ProjectionType: ALL
