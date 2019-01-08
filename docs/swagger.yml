@@ -225,7 +225,7 @@ paths:
         200:
           description: Group successfully matched
           schema:
-            $ref: '#definitions/DetailedGroupResponse'
+            $ref: '#/definitions/DetailedGroupResponse'
 
 definitions:
   NewUserRequest:
