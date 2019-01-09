@@ -22,10 +22,8 @@ paths:
       tags:
         - User mgmt
       summary: Create user
-      consumes:
-        - application/json
-      produces:
-        - application/json
+      consumes: [ application/json ]
+      produces: [ application/json ]
       parameters:
         - in: body
           name: NewUserRequest
@@ -45,10 +43,8 @@ paths:
         - Group setup
       summary: Create and join group
       description: Creates a new group and adds the specified user to that group
-      consumes:
-        - application/json
-      produces:
-        - application/json
+      consumes: [ application/json ]
+      produces: [ application/json ]
       parameters:
         - name: userId
           in: path
@@ -72,10 +68,8 @@ paths:
         - Group setup
       summary: Get groups by user
       description: Gets all groups that a user has been added to
-      consumes:
-        - application/json
-      produces:
-        - application/json
+      consumes: [ application/json ]
+      produces: [ application/json ]
       parameters:
         - name: userId
           in: path
@@ -94,10 +88,8 @@ paths:
         - Group setup
       summary: Join group
       description: Creates a new group and adds the specified user to that group
-      consumes:
-        - application/json
-      produces:
-        - application/json
+      consumes: [ application/json ]
+      produces: [ application/json ]
       parameters:
         - name: groupId
           in: path
@@ -115,16 +107,13 @@ paths:
           schema:
             $ref: '#/definitions/BasicGroupResponse'
 
-  /groups/{groupId}/users/{userId}:
     put:
       tags:
         - Profile mgmt
       summary: Update user profile
       description: Update the specified user profile
-      consumes:
-        - application/json
-      produces:
-        - application/json
+      consumes: [ application/json ]
+      produces: [ application/json ]
       parameters:
         - name: groupId
           in: path
@@ -154,10 +143,8 @@ paths:
         - Profile mgmt
       summary: Exclude user
       description: Indicates that user doesn't want to be assigned as the excluded user's secret santa
-      consumes:
-        - application/json
-      produces:
-        - application/json
+      consumes: [ application/json ]
+      produces: [ application/json ]
       parameters:
         - name: groupId
           in: path
@@ -186,10 +173,8 @@ paths:
         - Group setup
       summary: Get group detail by user
       description: Creates a new group and adds the specified user to that group
-      consumes:
-        - application/json
-      produces:
-        - application/json
+      consumes: [ application/json ]
+      produces: [ application/json ]
       parameters:
         - name: userId
           in: path
@@ -206,7 +191,7 @@ paths:
           description: Group successfully created and user added
           schema:
             $ref: '#/definitions/DetailedGroupResponse'
-            
+
     put:
       tags:
         - Group setup

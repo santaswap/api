@@ -10,7 +10,7 @@ const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 export const handler = apiWrapper(async ({ path, success, error }: ApiSignature) => {
   try {
     await matchGroup(path.groupId);
-    const response = await getDetailedGroupByUser(path.groupId, path.userId);
+    const response = await getDetailedGroupByUser(path.userId, path.groupId);
     success(response);
   } catch (err) {
     error(err);

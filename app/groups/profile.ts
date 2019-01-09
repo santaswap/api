@@ -14,6 +14,7 @@ export class ProfileRecord {
   excludedUserIds?: string[];
   testRequest: boolean;
   recordExpiration: number;
+  recipientUserId: string;
   created: string;
 
   constructor(record: any, exclusions?: any[]) {
@@ -27,6 +28,7 @@ export class ProfileRecord {
     this.recordExpiration = record.recordExpiration;
     this.created = record.created;
     this.testRequest = record.testRequest;
+    this.recipientUserId = record.recipientUserId;
     this.excludedUserIds = exclusions ? exclusions.map(exclusion => exclusion.excludedUserId) : [];
   }
 
@@ -37,6 +39,7 @@ export class ProfileRecord {
       giftIdeas: this.giftIdeas ? this.giftIdeas : '',
       address: this.address ? this.address : '',
       targetUserId: this.targetUserId,
+      recipientUserId: this.recipientUserId,
       excludedUserIds: this.excludedUserIds
     };
   }
@@ -55,6 +58,7 @@ export interface DetailedProfileResponse {
   giftIdeas: string;
   address: string;
   targetUserId: string;
+  recipientUserId: string;
   excludedUserIds: string[];
 }
 
