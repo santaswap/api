@@ -144,12 +144,13 @@ functions:
     events:
       - http:
           method: put
-          path: groups/{groupId}
+          path: users/{userId}/groups/{groupId}
           cors: true
           request:
             parameters:
               paths:
                 groupId: true
+                userId: true
 
 resources:
   Resources:

@@ -2,9 +2,14 @@
   "compilerOptions": {
     "sourceMap": true,
     "target": "es5",
-    "lib": ["es5", "es2015"],
+    "lib": [
+      "es5",
+      "es2015"
+    ],
     "experimentalDecorators": true,
     "moduleResolution": "node"
   },
-  "exclude": ["node_modules", "app/**/*.cucumber.ts"]
+  "exclude": [
+    "node_modules"
+  ]
 }

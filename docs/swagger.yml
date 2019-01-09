@@ -206,8 +206,7 @@ paths:
           description: Group successfully created and user added
           schema:
             $ref: '#/definitions/DetailedGroupResponse'
-
-  /groups/${groupId}:
+            
     put:
       tags:
         - Group setup

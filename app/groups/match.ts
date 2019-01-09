@@ -9,7 +9,8 @@ const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
 export const handler = apiWrapper(async ({ path, success, error }: ApiSignature) => {
   try {
-    const response = await matchGroup(path.groupId);
+    await matchGroup(path.groupId);
+    const response = await getDetailedGroupByUser(path.groupId, path.userId);
     success(response);
   } catch (err) {
     error(err);
@@ -64,4 +65,31 @@ async function updateProfile(request: UpdateProfileMatchRequest): Promise<any> {
   };
   console.log('Updating profile with params', params);
   await groups.update(params).promise();
+}
+
+async function getDetailedGroupByUser(userId: string, groupId: string): Promise<any> {
+  const params = {
+    TableName: process.env.GROUPS_TABLE,
+    KeyConditionExpression: '#groupId = :groupId',
+    ExpressionAttributeNames: { '#groupId': 'groupId' },
+    ExpressionAttributeValues: { ':groupId': `${groupId}` }
+  };
+  console.log('Getting group detail and members with params', params);
+  const items = await groups
+    .query(params)
+    .promise()
+    .then(res => res.Items);
+  const group = new GroupRecord(items.find(item => item.type.indexOf(GROUP_TYPE_PREFIX) > -1));
+  const profile = new ProfileRecord(
+    items.find(item => item.type === `${PROFILE_TYPE_PREFIX}${userId}`)
+  ).getDetailedProfileResponse();
+  const profiles = items
+    .filter(
+      item =>
+        item.type.indexOf(PROFILE_TYPE_PREFIX) > -1 &&
+        item.userId !== userId &&
+        item.type.indexOf(EXCLUSION_TYPE_PREFIX) < 0
+    )
+    .map(item => new ProfileRecord(item).getBasicProfileResponse());
+  return new DetailedGroupResponse(group, profiles, profile);
 }
