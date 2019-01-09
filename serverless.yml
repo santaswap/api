@@ -139,6 +139,18 @@ functions:
           path: users
           cors: true
 
+  matchGroup:
+    handler: app/groups/match.handler
+    events:
+      - http:
+          method: put
+          path: groups/{groupId}
+          cors: true
+          request:
+            parameters:
+              paths:
+                groupId: true
+
 resources:
   Resources:
     UsersTable:

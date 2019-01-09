@@ -42,7 +42,7 @@ async function getGroup(code: string): Promise<GroupRecord> {
     IndexName: process.env.GROUPS_TABLE_CODE_INDEX,
     KeyConditionExpression: '#code = :code',
     ExpressionAttributeNames: { '#code': 'code' },
-    ExpressionAttributeValues: { ':code': code }
+    ExpressionAttributeValues: { ':code': code.toUpperCase() }
   };
   console.info('Getting group by code with params', params);
   const res = await groups.query(params).promise();

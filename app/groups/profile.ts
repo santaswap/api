@@ -86,3 +86,22 @@ export class CreateProfileRequest {
     }
   }
 }
+
+export class UpdateProfileMatchRequest {
+  groupId: string;
+  type: string;
+  userId: string;
+  recipientUserId: string;
+  constructor({ groupId, userId, recipientUserId }: UpdateProfileMatchRequestConstructor) {
+    this.groupId = groupId;
+    this.userId = userId;
+    this.type = `${PROFILE_TYPE_PREFIX}${userId}`;
+    this.recipientUserId = recipientUserId;
+  }
+}
+
+interface UpdateProfileMatchRequestConstructor {
+  groupId: string;
+  userId: string;
+  recipientUserId: string;
+}

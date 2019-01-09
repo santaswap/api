@@ -208,7 +208,7 @@ paths:
             $ref: '#/definitions/DetailedGroupResponse'
 
   /groups/${groupId}:
-    post:
+    put:
       tags:
         - Group setup
       summary: Match participants
