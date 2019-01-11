@@ -250,7 +250,7 @@ definitions:
       recipientUserId:
         type: string
       recipient:
-        $ref: BasicProfileResponse
+        $ref: '#/definitions/BasicProfileResponse'
       excludedUserIds:
         type: array
         description: IDs of users this user doesn't want to be assigned as secret santa for
