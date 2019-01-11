@@ -303,6 +303,9 @@ definitions:
       code:
         type: string
         description: Code for joining this group
+      matched:
+        type: boolean
+        description: Whether or not the group was matched
       members:
         type: array
         description: Names of the people in the group
@@ -320,6 +323,9 @@ definitions:
       name:
         type: string
         description: Name of the group
+      matched:
+        type: boolean
+        description: Whether or not the group was matched
       profile:
         $ref: '#/definitions/ProfileResponse'
       members:

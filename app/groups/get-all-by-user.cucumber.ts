@@ -38,6 +38,6 @@ export class CreateAndJoinGroup {
     expect(responseGroup.name).to.equal(group.name);
     expect(responseGroup.code).to.equal(group.code);
     expect(responseGroup.members).to.have.members([user.name]);
-    expect(responseGroup).to.have.all.keys('groupId', 'name', 'code', 'members');
+    expect(responseGroup).to.have.all.keys('groupId', 'name', 'code', 'members', 'matched');
   }
 }

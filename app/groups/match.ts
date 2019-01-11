@@ -30,6 +30,19 @@ async function matchGroup(groupId: string): Promise<any> {
     return new UpdateProfileMatchRequest({ groupId, userId: profile.userId, recipientUserId: recipient.userId });
   });
   await Promise.all(updateProfileRequests.map(request => updateProfile(request)));
+  await updateGroupStatus(groupId, true);
+}
+
+async function updateGroupStatus(groupId: string, matched: boolean): Promise<any> {
+  const params = {
+    TableName: process.env.GROUPS_TABLE,
+    Key: { groupId, type: GROUP_TYPE_PREFIX },
+    UpdateExpression: 'SET #matched = :matched',
+    ExpressionAttributeNames: { '#matched': 'matched' },
+    ExpressionAttributeValues: { ':matched': matched }
+  };
+  console.log('Updating group matched status with params', params);
+  await groups.update(params).promise();
 }
 
 async function getProfiles(groupId: string): Promise<DetailedProfileResponse[]> {

@@ -13,6 +13,7 @@ export class CreateGroupRequest {
   created: string;
   testRequest: boolean;
   recordExpiration: number;
+  matched: boolean;
 
   constructor(body: any, testRequest: boolean) {
     this.groupId = v4();
@@ -20,6 +21,7 @@ export class CreateGroupRequest {
     this.type = GROUP_TYPE_PREFIX;
     this.name = body.name;
     this.code = chance.word({ length: 5 }).toUpperCase();
+    this.matched = false;
     this.testRequest = testRequest;
     if (testRequest) {
       const MINUTES_TO_LIVE = 30;
@@ -34,11 +36,13 @@ export class BasicGroupResponse {
   name: string;
   code: string;
   members: string[] = [];
+  matched: boolean;
 
   constructor(group: GroupRecord, userProfiles?: ProfileRecord[]) {
     this.groupId = group.groupId;
     this.name = group.name;
     this.code = group.code;
+    this.matched = group.matched;
     if (userProfiles && userProfiles.length) {
       this.members = userProfiles.map(userProfile => userProfile.name);
     }
@@ -51,6 +55,7 @@ export class DetailedGroupResponse {
   code: string;
   members: BasicProfileResponse[];
   profile: DetailedProfileResponse;
+  matched: boolean;
 
   constructor(group: GroupRecord, userProfiles: BasicProfileResponse[], profile: DetailedProfileResponse) {
     this.groupId = group.groupId;
@@ -58,6 +63,7 @@ export class DetailedGroupResponse {
     this.code = group.code;
     this.profile = profile;
     this.members = userProfiles;
+    this.matched = group.matched;
   }
 }
 
@@ -66,6 +72,7 @@ export class GroupRecord {
   name: string;
   type: string;
   code: string;
+  matched: boolean;
   created: string;
   testRequest: boolean;
   recordExpiration: number;
@@ -78,5 +85,6 @@ export class GroupRecord {
     this.created = record.created;
     this.recordExpiration = record.recordExpiration;
     this.testRequest = record.testRequest;
+    this.matched = record.matched;
   }
 }

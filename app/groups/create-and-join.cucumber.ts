@@ -41,6 +41,6 @@ export class CreateAndJoinGroup {
     expect(response.name).to.equal(request.name);
     expect(response.code).to.be.a('string');
     expect(response.members).to.have.members([user.name]);
-    expect(response).to.have.all.keys('groupId', 'name', 'code', 'members');
+    expect(response).to.have.all.keys('groupId', 'name', 'code', 'members', 'matched');
   }
 }

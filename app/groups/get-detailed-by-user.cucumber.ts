@@ -36,7 +36,7 @@ export class GetDetailedGroup {
     expect(response.groupId).to.equal(group.groupId);
     expect(response.name).to.equal(group.name);
     expect(response.code).to.be.a('string');
-    expect(response).to.have.all.keys('groupId', 'name', 'code', 'members', 'profile');
+    expect(response).to.have.all.keys('groupId', 'name', 'code', 'members', 'profile', 'matched');
 
     // Validate profile details
     const profile = response.profile;
