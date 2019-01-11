@@ -19,11 +19,10 @@ tags:
 paths:
   /users:
     post:
-      tags:
-        - User mgmt
       summary: Create user
-      consumes: [ application/json ]
-      produces: [ application/json ]
+      tags: [User mgmt]
+      consumes: [application/json]
+      produces: [application/json]
       parameters:
         - in: body
           name: NewUserRequest
@@ -39,12 +38,11 @@ paths:
 
   /users/{userId}/groups:
     post:
-      tags:
-        - Group setup
       summary: Create and join group
       description: Creates a new group and adds the specified user to that group
-      consumes: [ application/json ]
-      produces: [ application/json ]
+      tags: [Group setup]
+      consumes: [application/json]
+      produces: [application/json]
       parameters:
         - name: userId
           in: path
@@ -64,12 +62,11 @@ paths:
             $ref: '#/definitions/BasicGroupResponse'
 
     get:
-      tags:
-        - Group setup
       summary: Get groups by user
       description: Gets all groups that a user has been added to
-      consumes: [ application/json ]
-      produces: [ application/json ]
+      tags: [Group setup]
+      consumes: [application/json]
+      produces: [application/json]
       parameters:
         - name: userId
           in: path
@@ -84,12 +81,11 @@ paths:
 
   /groups/{groupId}/users/{userId}:
     post:
-      tags:
-        - Group setup
       summary: Join group
       description: Creates a new group and adds the specified user to that group
-      consumes: [ application/json ]
-      produces: [ application/json ]
+      tags: [Group setup]
+      consumes: [application/json]
+      produces: [application/json]
       parameters:
         - name: groupId
           in: path
@@ -108,12 +104,11 @@ paths:
             $ref: '#/definitions/BasicGroupResponse'
 
     put:
-      tags:
-        - Profile mgmt
       summary: Update user profile
       description: Update the specified user profile
-      consumes: [ application/json ]
-      produces: [ application/json ]
+      tags: [Profile mgmt]
+      consumes: [application/json]
+      produces: [application/json]
       parameters:
         - name: groupId
           in: path
@@ -139,12 +134,11 @@ paths:
 
   /groups/{groupId}/users/{userId}/excludedUsers/{excludedUserId}:
     post:
-      tags:
-        - Profile mgmt
       summary: Exclude user
       description: Indicates that user doesn't want to be assigned as the excluded user's secret santa
-      consumes: [ application/json ]
-      produces: [ application/json ]
+      tags: [Profile mgmt]
+      consumes: [application/json]
+      produces: [application/json]
       parameters:
         - name: groupId
           in: path
@@ -169,12 +163,11 @@ paths:
 
   /users/{userId}/groups/{groupId}:
     get:
-      tags:
-        - Group setup
       summary: Get group detail by user
       description: Creates a new group and adds the specified user to that group
-      consumes: [ application/json ]
-      produces: [ application/json ]
+      tags: [Group setup]
+      consumes: [application/json]
+      produces: [application/json]
       parameters:
         - name: userId
           in: path
@@ -192,13 +185,13 @@ paths:
           schema:
             $ref: '#/definitions/DetailedGroupResponse'
 
-    put:
-      tags:
-        - Group setup
+  /users/{userId}/groups/{groupId}/match:
+    post:
       summary: Match participants
       description: Assign each member of the group a secret santa gift recipient
-      consumes: [ application/json ]
-      produces: [ application/json ]
+      tags: [Group setup]
+      consumes: [application/json]
+      produces: [application/json]
       parameters:
         - name: groupId
           in: path
@@ -254,6 +247,10 @@ definitions:
       giftIdeas:
         type: string
         description: Gift ideas for what to get this user
+      recipientUserId:
+        type: string
+      recipient:
+        $ref: ProfileResponse
       excludedUserIds:
         type: array
         description: IDs of users this user doesn't want to be assigned as secret santa for

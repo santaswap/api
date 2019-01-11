@@ -46,9 +46,9 @@ async function getProfile(groupId: string, userId: string): Promise<DetailedProf
     .query(params)
     .promise()
     .then(res => res.Items);
-  const profileRecord = items.find(item => item.type === `${PROFILE_TYPE_PREFIX}${userId}`);
+  const record = items.find(item => item.type === `${PROFILE_TYPE_PREFIX}${userId}`);
   const exclusions = items.filter(
     item => item.type.indexOf(`${PROFILE_TYPE_PREFIX}${userId}${EXCLUSION_TYPE_PREFIX}`) > -1
   );
-  return new ProfileRecord(profileRecord, exclusions).getDetailedProfileResponse();
+  return new ProfileRecord({ record, exclusions }).getDetailedProfileResponse();
 }

@@ -36,7 +36,7 @@ export async function getProfiles(userId: string): Promise<ProfileRecord[]> {
     .query(params)
     .promise()
     .then(res => res.Items);
-  return items.map(item => new ProfileRecord(item));
+  return items.map(record => new ProfileRecord({ record }));
 }
 
 async function getGroupAndMembers(groupId: string): Promise<BasicGroupResponse> {
@@ -56,6 +56,6 @@ async function getGroupAndMembers(groupId: string): Promise<BasicGroupResponse> 
     .filter(
       item => item.type && item.type.indexOf(PROFILE_TYPE_PREFIX) > -1 && item.type.indexOf(EXCLUSION_TYPE_PREFIX) < 0
     )
-    .map(item => new ProfileRecord(item));
+    .map(record => new ProfileRecord({ record }));
   return new BasicGroupResponse(group, profiles);
 }

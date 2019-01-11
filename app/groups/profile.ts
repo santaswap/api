@@ -1,5 +1,6 @@
 import { GroupRecord } from './group';
 import { User } from './user';
+import { ExclusionRecord } from '../profiles/exclusion';
 
 export const PROFILE_TYPE_PREFIX = 'USER:';
 
@@ -15,9 +16,10 @@ export class ProfileRecord {
   testRequest: boolean;
   recordExpiration: number;
   recipientUserId: string;
+  recipient: BasicProfileResponse;
   created: string;
 
-  constructor(record: any, exclusions?: any[]) {
+  constructor({ record, exclusions, profiles }: ProfileRecordConstructor) {
     this.groupId = record.groupId;
     this.userId = record.userId;
     this.type = record.type;
@@ -29,6 +31,9 @@ export class ProfileRecord {
     this.created = record.created;
     this.testRequest = record.testRequest;
     this.recipientUserId = record.recipientUserId;
+    if (record.recipientUserId && profiles) {
+      this.recipient = profiles.find(profile => profile.userId === record.recipientUserId);
+    }
     this.excludedUserIds = exclusions ? exclusions.map(exclusion => exclusion.excludedUserId) : [];
   }
 
@@ -40,6 +45,7 @@ export class ProfileRecord {
       address: this.address ? this.address : '',
       targetUserId: this.targetUserId,
       recipientUserId: this.recipientUserId,
+      recipient: this.recipient,
       excludedUserIds: this.excludedUserIds
     };
   }
@@ -47,9 +53,17 @@ export class ProfileRecord {
   getBasicProfileResponse(): BasicProfileResponse {
     return {
       userId: this.userId,
-      name: this.name
+      name: this.name,
+      giftIdeas: this.giftIdeas,
+      address: this.address
     };
   }
+}
+
+export interface ProfileRecordConstructor {
+  record: any;
+  exclusions?: any[]; // TODO update to ExclusionRecord[];
+  profiles?: BasicProfileResponse[];
 }
 
 export interface DetailedProfileResponse {
@@ -59,12 +73,15 @@ export interface DetailedProfileResponse {
   address: string;
   targetUserId: string;
   recipientUserId: string;
+  recipient: BasicProfileResponse;
   excludedUserIds: string[];
 }
 
 export interface BasicProfileResponse {
   userId: string;
   name: string;
+  giftIdeas: string;
+  address: string;
 }
 
 export class CreateProfileRequest {

@@ -46,7 +46,7 @@ async function getProfiles(groupId: string): Promise<DetailedProfileResponse[]> 
     .then(res => res.Items);
   const profiles = items
     .filter(item => item.type.indexOf(PROFILE_TYPE_PREFIX) > -1 && item.type.indexOf(EXCLUSION_TYPE_PREFIX) < 0)
-    .map(item => new ProfileRecord(item).getDetailedProfileResponse());
+    .map(record => new ProfileRecord({ record }).getDetailedProfileResponse());
   // const exclusions = items
   //   .filter(item => item.type.indexOf(EXCLUSION_TYPE_PREFIX) > -1)
   //   .map(item => new ExclusionRecord(item));
@@ -80,9 +80,6 @@ async function getDetailedGroupByUser(userId: string, groupId: string): Promise<
     .promise()
     .then(res => res.Items);
   const group = new GroupRecord(items.find(item => item.type.indexOf(GROUP_TYPE_PREFIX) > -1));
-  const profile = new ProfileRecord(
-    items.find(item => item.type === `${PROFILE_TYPE_PREFIX}${userId}`)
-  ).getDetailedProfileResponse();
   const profiles = items
     .filter(
       item =>
@@ -90,6 +87,10 @@ async function getDetailedGroupByUser(userId: string, groupId: string): Promise<
         item.userId !== userId &&
         item.type.indexOf(EXCLUSION_TYPE_PREFIX) < 0
     )
-    .map(item => new ProfileRecord(item).getBasicProfileResponse());
+    .map(record => new ProfileRecord({ record }).getBasicProfileResponse());
+  const profile = new ProfileRecord({
+    record: items.find(item => item.type === `${PROFILE_TYPE_PREFIX}${userId}`),
+    profiles
+  }).getDetailedProfileResponse();
   return new DetailedGroupResponse(group, profiles, profile);
 }

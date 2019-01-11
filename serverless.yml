@@ -143,8 +143,8 @@ functions:
     handler: app/groups/match.handler
     events:
       - http:
-          method: put
-          path: users/{userId}/groups/{groupId}
+          method: post
+          path: users/{userId}/groups/{groupId}/match
           cors: true
           request:
             parameters:

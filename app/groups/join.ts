@@ -56,5 +56,5 @@ async function saveProfile(profile: CreateProfileRequest): Promise<ProfileRecord
   };
   console.log('Creating new profile with params', params);
   await groups.put(params).promise();
-  return new ProfileRecord(profile);
+  return new ProfileRecord({ record: profile });
 }
