@@ -26,10 +26,25 @@ async function updateProfile(request: UpdateProfileRequest) {
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Key: { groupId: request.groupId, type: request.type },
-    UpdateExpression: 'SET #name = :name, #address = :address, #giftIdeas = :giftIdeas',
-    ExpressionAttributeNames: { '#name': 'name', '#address': 'address', '#giftIdeas': 'giftIdeas' },
-    ExpressionAttributeValues: { ':name': request.name, ':address': request.address, ':giftIdeas': request.giftIdeas }
+    UpdateExpression: 'SET #updated = :updated',
+    ExpressionAttributeNames: { '#updated': 'updated' },
+    ExpressionAttributeValues: { ':updated': new Date().toUTCString() }
   };
+  if (request.name) {
+    params.UpdateExpression += ', #name = :name';
+    params.ExpressionAttributeNames['#name'] = 'name';
+    params.ExpressionAttributeValues[':name'] = request.name;
+  }
+  if (request.address) {
+    params.UpdateExpression += ', #address = :address';
+    params.ExpressionAttributeNames['#address'] = 'address';
+    params.ExpressionAttributeValues[':address'] = request.address;
+  }
+  if (request.giftIdeas) {
+    params.UpdateExpression += ', #giftIdeas = :giftIdeas';
+    params.ExpressionAttributeNames['#giftIdeas'] = 'giftIdeas';
+    params.ExpressionAttributeValues[':giftIdeas'] = request.giftIdeas;
+  }
   console.log('Updating profile with params', params);
   await groups.update(params).promise();
 }

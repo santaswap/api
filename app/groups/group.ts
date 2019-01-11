@@ -11,6 +11,7 @@ export class CreateGroupRequest {
   name: string;
   code: string;
   created: string;
+  updated: string;
   testRequest: boolean;
   recordExpiration: number;
   matched: boolean;

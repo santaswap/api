@@ -18,6 +18,7 @@ export class ProfileRecord {
   recipientUserId: string;
   recipient: BasicProfileResponse;
   created: string;
+  updated: string;
 
   constructor({ record, exclusions, profiles }: ProfileRecordConstructor) {
     this.groupId = record.groupId;
@@ -29,6 +30,7 @@ export class ProfileRecord {
     this.targetUserId = record.targetUserId;
     this.recordExpiration = record.recordExpiration;
     this.created = record.created;
+    this.updated = record.updated;
     this.testRequest = record.testRequest;
     this.recipientUserId = record.recipientUserId;
     if (record.recipientUserId && profiles) {

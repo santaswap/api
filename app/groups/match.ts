@@ -37,9 +37,9 @@ async function updateGroupStatus(groupId: string, matched: boolean): Promise<any
   const params = {
     TableName: process.env.GROUPS_TABLE,
     Key: { groupId, type: GROUP_TYPE_PREFIX },
-    UpdateExpression: 'SET #matched = :matched',
-    ExpressionAttributeNames: { '#matched': 'matched' },
-    ExpressionAttributeValues: { ':matched': matched }
+    UpdateExpression: 'SET #matched = :matched, #updated = :updated',
+    ExpressionAttributeNames: { '#matched': 'matched', '#updated': 'updated' },
+    ExpressionAttributeValues: { ':matched': matched, ':updated': new Date().toUTCString() }
   };
   console.log('Updating group matched status with params', params);
   await groups.update(params).promise();
