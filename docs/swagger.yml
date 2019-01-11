@@ -250,12 +250,27 @@ definitions:
       recipientUserId:
         type: string
       recipient:
-        $ref: ProfileResponse
+        $ref: BasicProfileResponse
       excludedUserIds:
         type: array
         description: IDs of users this user doesn't want to be assigned as secret santa for
         items:
           type: string
+
+  BasicProfileResponse:
+    type: object
+    properties:
+      userId:
+        type: string
+      name:
+        type: string
+        description: User's name
+      address:
+        type: string
+        description: Address for shipping this user's gifts to
+      giftIdeas:
+        type: string
+        description: Gift ideas for what to get this user
 
   NewGroupRequest:
     type: object
