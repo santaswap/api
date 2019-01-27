@@ -2,7 +2,7 @@ service:
   name: santaswap-api
 
 plugins:
-  - serverless-plugin-iopipe
+  - serverless-plugin-epsagon
   - serverless-webpack
   - serverless-plugin-iam-checker
   - serverless-cloudformation-resource-counter
