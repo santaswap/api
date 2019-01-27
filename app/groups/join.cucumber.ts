@@ -11,34 +11,22 @@ const TIMEOUT = 10000;
 
 @binding([SharedState])
 export class JoinGroup {
-  constructor(protected sharedState: SharedState) {
-    sharedState.anotherCreateUserRequest = { name: `${TEST_NAME_PREFIX}: ${chance.name()}` };
-  }
-
+  constructor(protected sharedState: SharedState) {}
   groupResponse: any;
-
-  @when(/another valid user create request is made/, null, TIMEOUT)
-  public async createAnotherUser() {
-    const { anotherCreateUserRequest: request } = this.sharedState;
-    const params = {
-      url: `${URL}/users`,
-      method: 'post',
-      simple: false,
-      body: JSON.stringify(request),
-      headers: { 'SantaSwap-Test-Request': true }
-    };
-    this.sharedState.createAnotherUserResponse = JSON.parse(await post(params));
-  }
 
   @when(/a valid join request is made/, null, TIMEOUT)
   public async joinGroup() {
-    const { createAndJoinGroupResponse: group, createAnotherUserResponse: user } = this.sharedState;
+    const { createAndJoinGroupResponse: group, anotherUser: user } = this.sharedState;
+    const request = { user };
     const params = {
       url: `${URL}/groups/${group.code}/users/${user.userId}`,
       method: 'post',
-      simple: false
+      simple: false,
+      body: JSON.stringify(request),
+      headers: { 'SantaSwap-Test-Request': true, 'Content-Type': 'application/json' }
     };
     this.sharedState.joinGroupResponse = JSON.parse(await post(params));
+    this.sharedState.joinGroupRequest = request;
   }
 
   @then(/the API response will include the basic group response/)
@@ -48,7 +36,7 @@ export class JoinGroup {
       joinGroupResponse: response,
       anotherCreateUserRequest: user
     } = this.sharedState;
-
+    console.log(response);
     expect(response.groupId).to.equal(group.groupId);
     expect(response.name).to.equal(group.name);
     expect(response.code).to.be.a('string');

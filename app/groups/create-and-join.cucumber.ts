@@ -11,30 +11,26 @@ const TIMEOUT = 10000;
 
 @binding([SharedState])
 export class CreateAndJoinGroup {
-  constructor(protected sharedState: SharedState) {
-    sharedState.createAndJoinGroupRequest = { name: `${TEST_NAME_PREFIX}: ${chance.last()} family` };
-  }
+  constructor(protected sharedState: SharedState) {}
 
   @when(/a valid create and join request is made/, null, TIMEOUT)
   public async createAndJoinGroup() {
-    const { createUserResponse: user, createAndJoinGroupRequest: request } = this.sharedState;
+    const { user } = this.sharedState;
+    const request = { name: `${TEST_NAME_PREFIX}: ${chance.last()} family`, user };
+    this.sharedState.createAndJoinGroupRequest = request;
     const params = {
       url: `${URL}/users/${user.userId}/groups`,
       method: 'post',
       simple: false,
       body: JSON.stringify(request),
-      headers: { 'SantaSwap-Test-Request': true }
+      headers: { 'SantaSwap-Test-Request': true, 'Content-Type': 'application/json' }
     };
     this.sharedState.createAndJoinGroupResponse = JSON.parse(await post(params));
   }
 
   @then(/the API response will include the new group/)
   public validateCreateAndJoin() {
-    const {
-      createAndJoinGroupRequest: request,
-      createAndJoinGroupResponse: response,
-      createUserResponse: user
-    } = this.sharedState;
+    const { createAndJoinGroupRequest: request, createAndJoinGroupResponse: response, user } = this.sharedState;
 
     // Make sure the id matches uuid pattern
     expect(response.groupId).to.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);

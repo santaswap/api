@@ -14,7 +14,7 @@ export class CreateAndJoinGroup {
 
   @when(/a valid get all groups by user request is made/, null, TIMEOUT)
   public async getAllGroups() {
-    const { createUserResponse: user } = this.sharedState;
+    const { user } = this.sharedState;
     const params = {
       url: `${URL}/users/${user.userId}/groups`,
       method: 'get',
@@ -26,11 +26,7 @@ export class CreateAndJoinGroup {
 
   @then(/the API response will include basic group responses/)
   public validateCreateAndJoin() {
-    const {
-      getAllGroupsResponse: response,
-      createAndJoinGroupResponse: group,
-      createUserResponse: user
-    } = this.sharedState;
+    const { getAllGroupsResponse: response, createAndJoinGroupResponse: group, user } = this.sharedState;
 
     expect(response.length).to.equal(1);
     const responseGroup = response[0];

@@ -25,13 +25,11 @@ provider:
       Resource:
         - { Fn::GetAtt: [GroupsTable, Arn] }
         - { Fn::Join: ['', [{ Fn::GetAtt: [GroupsTable, Arn] }, '/index/*']] }
-        - { Fn::GetAtt: [UsersTable, Arn] }
   environment:
     TEST_REQUEST_HEADER: SantaSwap-Test-Request
     GROUPS_TABLE: { Ref: GroupsTable }
     GROUPS_TABLE_TYPE_INDEX: TypeIndex
     GROUPS_TABLE_CODE_INDEX: GroupCodeIndex
-    USERS_TABLE: { Ref: UsersTable }
     REVISION: ${file(infrastructure/helper.js):revision}
     STAGE: ${opt:stage, self:provider.stage}
 
@@ -133,14 +131,6 @@ functions:
                 userId: true
                 groupId: true
 
-  createUser:
-    handler: app/users/create.handler
-    events:
-      - http:
-          method: post
-          path: users
-          cors: true
-
   matchGroup:
     handler: app/groups/match.handler
     events:
@@ -156,20 +146,6 @@ functions:
 
 resources:
   Resources:
-    UsersTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        AttributeDefinitions:
-          - AttributeName: userId
-            AttributeType: S
-        BillingMode: PAY_PER_REQUEST
-        KeySchema:
-          - AttributeName: userId
-            KeyType: HASH
-        TimeToLiveSpecification:
-          AttributeName: recordExpiration
-          Enabled: true
-
     GroupsTable:
       Type: AWS::DynamoDB::Table
       Properties:

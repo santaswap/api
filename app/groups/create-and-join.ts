@@ -7,20 +7,19 @@ import { UserRecord } from './user';
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 const users = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
-export const handler = apiWrapper(async ({ body, path, testRequest, success, error }: ApiSignature) => {
+export const handler = apiWrapper(async ({ body, testRequest, success, error }: ApiSignature) => {
   try {
-    const group = new CreateGroupRequest(body, testRequest);
-    const response = await createAndJoinGroup(group, path.userId);
+    const response = await createAndJoinGroup(body, testRequest);
     success(response);
   } catch (err) {
     error(err);
   }
 });
 
-async function createAndJoinGroup(createGroupRequest: CreateGroupRequest, userId: string): Promise<any> {
+async function createAndJoinGroup(body: any, testRequest: boolean): Promise<any> {
+  const createGroupRequest = new CreateGroupRequest(body, testRequest);
   const group = await saveGroup(createGroupRequest);
-  const user = await getUser(userId);
-  const createProfileRequest = new CreateProfileRequest(group, user);
+  const createProfileRequest = new CreateProfileRequest(group, body.user);
   const profile = await saveProfile(createProfileRequest);
   return new BasicGroupResponse(group, [profile]);
 }
@@ -33,18 +32,6 @@ async function saveGroup(group: CreateGroupRequest): Promise<GroupRecord> {
   console.log('Creating new group with params', params);
   await groups.put(params).promise();
   return <GroupRecord>group;
-}
-
-function getUser(userId: string): Promise<UserRecord> {
-  const params = {
-    TableName: process.env.USERS_TABLE,
-    Key: { userId }
-  };
-  console.log('Getting user with params', params);
-  return users
-    .get(params)
-    .promise()
-    .then(res => <UserRecord>res.Item);
 }
 
 async function saveProfile(profile: CreateProfileRequest): Promise<ProfileRecord> {
