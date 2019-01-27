@@ -14,10 +14,9 @@
     "generate:swagger": "yaml2json docs/swagger.yml --save"
   },
   "dependencies": {
-    "@iopipe/iopipe": "^1.11.1",
-    "@iopipe/logger": "^1.2.0",
-    "@manwaring/lambda-wrapper": "^0.1.13",
+    "@manwaring/lambda-wrapper": "^0.2.1",
     "chance": "^1.0.18",
+    "epsagon": "^1.8.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
@@ -38,8 +37,8 @@
     "serverless": "^1.34.1",
     "serverless-cloudformation-resource-counter": "^0.2.0",
     "serverless-domain-manager": "^2.6.6",
+    "serverless-plugin-epsagon": "^1.4.10",
     "serverless-plugin-iam-checker": "0.0.43",
-    "serverless-plugin-iopipe": "^1.6.2",
     "serverless-stack-output": "^0.2.3",
     "serverless-webpack": "^5.1.1",
     "source-map-support": "^0.5.6",
@@ -52,15 +51,5 @@
     "hooks": {
       "pre-commit": "npm run generate:swagger"
     }
-  },
-  "iopipe": {
-    "plugins": [
-      [
-        "@iopipe/logger",
-        {
-          "enabled": true
-        }
-      ]
-    ]
   }
 }
