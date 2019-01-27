@@ -30,8 +30,9 @@ export class GetDetailedGroup {
       getDetailedGroupResponse: response,
       user,
       createAndJoinGroupResponse: group,
-      createAnotherUserResponse: anotherUser
+      anotherUser: anotherUser
     } = this.sharedState;
+
     // Validate group details
     expect(response.groupId).to.equal(group.groupId);
     expect(response.name).to.equal(group.name);
@@ -46,7 +47,6 @@ export class GetDetailedGroup {
     expect(profile).to.have.all.keys(['userId', 'giftIdeas', 'address', 'name', 'email', 'excludedUserIds']);
 
     // Validate member details
-
     expect(response.members).to.be.an('array');
     expect(response.members.length).to.equal(1);
     const member = response.members[0];

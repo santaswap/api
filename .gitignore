@@ -11,6 +11,9 @@ jspm_packages
 # IOPipe directories
 iopipe_handlers
 
+# Epsagon directories
+epsagon_handlers
+
 # Stack outputs from serverless plugin
 .stack-outputs.yml
 

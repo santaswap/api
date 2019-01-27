@@ -14,7 +14,7 @@
     "generate:swagger": "yaml2json docs/swagger.yml --save"
   },
   "dependencies": {
-    "@manwaring/lambda-wrapper": "^0.2.1",
+    "@manwaring/lambda-wrapper": "^0.2.2",
     "chance": "^1.0.18",
     "epsagon": "^1.8.0",
     "uuid": "^3.3.2"

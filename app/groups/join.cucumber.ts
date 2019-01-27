@@ -6,7 +6,6 @@ import { getDeployedUrl, SharedState } from '@manwaring/serverless-test-helper';
 
 const chance = new Chance();
 const URL = getDeployedUrl();
-const TEST_NAME_PREFIX = 'TEST_USER';
 const TIMEOUT = 10000;
 
 @binding([SharedState])
@@ -17,26 +16,21 @@ export class JoinGroup {
   @when(/a valid join request is made/, null, TIMEOUT)
   public async joinGroup() {
     const { createAndJoinGroupResponse: group, anotherUser: user } = this.sharedState;
-    const request = { user };
     const params = {
       url: `${URL}/groups/${group.code}/users/${user.userId}`,
       method: 'post',
       simple: false,
-      body: JSON.stringify(request),
+      body: JSON.stringify(user),
       headers: { 'SantaSwap-Test-Request': true, 'Content-Type': 'application/json' }
     };
     this.sharedState.joinGroupResponse = JSON.parse(await post(params));
-    this.sharedState.joinGroupRequest = request;
+    this.sharedState.joinGroupRequest = user;
   }
 
   @then(/the API response will include the basic group response/)
   public validateJoin() {
-    const {
-      createAndJoinGroupResponse: group,
-      joinGroupResponse: response,
-      anotherCreateUserRequest: user
-    } = this.sharedState;
-    console.log(response);
+    const { createAndJoinGroupResponse: group, joinGroupResponse: response, anotherUser: user } = this.sharedState;
+
     expect(response.groupId).to.equal(group.groupId);
     expect(response.name).to.equal(group.name);
     expect(response.code).to.be.a('string');

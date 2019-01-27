@@ -16,7 +16,7 @@ export class CreateUser {
   public async setupUser() {
     this.sharedState.user = {
       userId: `google-oauth2-${chance.integer({ min: 10000000000000000, max: 999999999999999999999 })}`,
-      name: chance.name(),
+      name: `${TEST_NAME_PREFIX}: ${chance.name()}`,
       email: chance.email()
     };
   }
@@ -25,7 +25,7 @@ export class CreateUser {
   public async setupAnotherUser() {
     this.sharedState.anotherUser = {
       userId: `twitter-${chance.integer({ min: 10000000, max: 99999999999999999 })}`,
-      name: chance.name(),
+      name: `${TEST_NAME_PREFIX}: ${chance.name()}`,
       email: chance.email()
     };
   }

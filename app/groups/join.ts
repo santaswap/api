@@ -2,11 +2,9 @@ import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { CreateProfileRequest, ProfileRecord } from './profile';
 import { GroupRecord, BasicGroupResponse, GROUP_TYPE_PREFIX } from './group';
-import { UserRecord } from './user';
 import { User } from './user';
 
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
-const users = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
 export const handler = apiWrapper(async ({ body, path, success, error }: ApiSignature) => {
   try {
