@@ -17,25 +17,6 @@ tags:
     description: Managing user information
 
 paths:
-  /users:
-    post:
-      summary: Create user
-      tags: [User mgmt]
-      consumes: [application/json]
-      produces: [application/json]
-      parameters:
-        - in: body
-          name: NewUserRequest
-          description: Properties of the new user being created
-          required: true
-          schema:
-            $ref: '#/definitions/NewUserRequest'
-      responses:
-        200:
-          description: User successfully created
-          schema:
-            $ref: '#/definitions/UserResponse'
-
   /users/{userId}/groups:
     post:
       summary: Create and join group
@@ -97,6 +78,12 @@ paths:
           description: ID of the user joining the group
           required: true
           type: string
+        - in: body
+          name: NewProfileRequest
+          description: Properties of the new profile being created
+          required: true
+          schema:
+            $ref: '#/definitions/NewProfileRequest'
       responses:
         200:
           description: User successfully added to group
@@ -193,6 +180,11 @@ paths:
       consumes: [application/json]
       produces: [application/json]
       parameters:
+        - name: userId
+          in: path
+          description: ID of the user initiating the match
+          required: true
+          type: string
         - name: groupId
           in: path
           description: ID of the group to initiate the match on
@@ -205,33 +197,16 @@ paths:
             $ref: '#/definitions/DetailedGroupResponse'
 
 definitions:
-  NewUserRequest:
+  NewProfileRequest:
     type: object
     properties:
       userId:
         type: string
-      pictureUrl:
-        type: string
-        description: URL of the user's avatar
       email:
         type: string
       name:
         type: string
         description: User's name
-
-  UserResponse:
-    type: object
-    properties:
-      userId:
-        type: string
-      name:
-        type: string
-        description: User's name
-      pictureUrl:
-        type: string
-        description: URL of the user's picture
-      email:
-        type: string
 
   ProfileResponse:
     type: object
@@ -241,6 +216,8 @@ definitions:
       name:
         type: string
         description: User's name
+      email:
+        type: string
       address:
         type: string
         description: Address for shipping this user's gifts to
@@ -278,6 +255,8 @@ definitions:
       name:
         type: string
         description: Group's name
+      user:
+        $ref: '#/definitions/NewProfileRequest'
 
   ProfileRequest:
     type: object
@@ -332,4 +311,4 @@ definitions:
         type: array
         description: Names of the people in the group
         items:
-          $ref: '#/definitions/UserResponse'
+          $ref: '#/definitions/ProfileResponse'

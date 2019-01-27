@@ -14,7 +14,7 @@ export class GetDetailedGroup {
 
   @when(/a valid get detailed by user request is made/, null, TIMEOUT)
   public async getDetailedGroup() {
-    const { createUserResponse: user, createAndJoinGroupResponse: group } = this.sharedState;
+    const { user, createAndJoinGroupResponse: group } = this.sharedState;
     const params = {
       url: `${URL}/users/${user.userId}/groups/${group.groupId}`,
       method: 'get',
@@ -28,10 +28,11 @@ export class GetDetailedGroup {
   public validateGetDetailedGroup() {
     const {
       getDetailedGroupResponse: response,
-      createUserResponse: user,
+      user,
       createAndJoinGroupResponse: group,
-      createAnotherUserResponse: anotherUser
+      anotherUser: anotherUser
     } = this.sharedState;
+
     // Validate group details
     expect(response.groupId).to.equal(group.groupId);
     expect(response.name).to.equal(group.name);
@@ -43,10 +44,9 @@ export class GetDetailedGroup {
     expect(profile.userId).to.equal(user.userId);
     expect(profile.name).to.equal(user.name);
     expect(profile.excludedUserIds).to.be.an('array');
-    expect(profile).to.have.all.keys(['userId', 'giftIdeas', 'address', 'name', 'excludedUserIds']);
+    expect(profile).to.have.all.keys(['userId', 'giftIdeas', 'address', 'name', 'email', 'excludedUserIds']);
 
     // Validate member details
-
     expect(response.members).to.be.an('array');
     expect(response.members.length).to.equal(1);
     const member = response.members[0];

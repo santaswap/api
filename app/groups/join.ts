@@ -2,38 +2,24 @@ import { DynamoDB } from 'aws-sdk';
 import { apiWrapper, ApiSignature } from '@manwaring/lambda-wrapper';
 import { CreateProfileRequest, ProfileRecord } from './profile';
 import { GroupRecord, BasicGroupResponse, GROUP_TYPE_PREFIX } from './group';
-import { UserRecord } from './user';
+import { User } from './user';
 
 const groups = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
-const users = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
-export const handler = apiWrapper(async ({ path, success, error }: ApiSignature) => {
+export const handler = apiWrapper(async ({ body, path, success, error }: ApiSignature) => {
   try {
-    const response = await joinGroup(path.groupId, path.userId);
+    const response = await joinGroup(path.groupId, body);
     success(response);
   } catch (err) {
     error(err);
   }
 });
 
-async function joinGroup(groupId: string, userId: string): Promise<BasicGroupResponse> {
-  const user = await getUser(userId);
+async function joinGroup(groupId: string, user: User): Promise<BasicGroupResponse> {
   const group = await getGroup(groupId);
   const profileRequest = new CreateProfileRequest(group, user);
   const profile = await saveProfile(profileRequest);
   return new BasicGroupResponse(group, [profile]);
-}
-
-function getUser(userId: string): Promise<UserRecord> {
-  const params = {
-    TableName: process.env.USERS_TABLE,
-    Key: { userId }
-  };
-  console.log('Getting user with params', params);
-  return users
-    .get(params)
-    .promise()
-    .then(res => <UserRecord>res.Item);
 }
 
 async function getGroup(code: string): Promise<GroupRecord> {

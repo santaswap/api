@@ -21,17 +21,13 @@ export class UpdateProfile {
 
   @when(/a valid update profile request is made/, null, TIMEOUT)
   public async update() {
-    const {
-      updateProfileRequest: request,
-      createAndJoinGroupResponse: group,
-      createUserResponse: user
-    } = this.sharedState;
+    const { updateProfileRequest: request, createAndJoinGroupResponse: group, user } = this.sharedState;
     const params = {
       url: `${URL}/groups/${group.groupId}/users/${user.userId}`,
       method: 'post',
       simple: false,
       body: JSON.stringify(request),
-      headers: { 'SantaSwap-Test-Request': true }
+      headers: { 'SantaSwap-Test-Request': true, 'Content-Type': 'application/json' }
     };
     this.sharedState.updateProfileResponse = JSON.parse(await put(params));
   }
@@ -41,7 +37,7 @@ export class UpdateProfile {
     const {
       updateProfileResponse: response,
       updateProfileRequest: request,
-      createUserResponse: user,
+      user,
       createAnotherUserResponse: anotherUser
     } = this.sharedState;
     expect(response.userId).to.equal(user.userId);
@@ -49,6 +45,6 @@ export class UpdateProfile {
     expect(response.giftIdeas).to.equal(request.giftIdeas);
     expect(response.address).to.equal(request.address);
     expect(response.excludedUserIds).to.be.an('array');
-    expect(response).to.have.all.keys('userId', 'name', 'address', 'giftIdeas', 'excludedUserIds');
+    expect(response).to.have.all.keys('userId', 'name', 'email', 'address', 'giftIdeas', 'excludedUserIds');
   }
 }

@@ -9,6 +9,7 @@ export class ProfileRecord {
   userId: string;
   type: string;
   name: string;
+  email: string;
   giftIdeas?: string;
   address: string;
   targetUserId?: string;
@@ -25,6 +26,7 @@ export class ProfileRecord {
     this.userId = record.userId;
     this.type = record.type;
     this.name = record.name;
+    this.email = record.email;
     this.giftIdeas = record.giftIdeas;
     this.address = record.address;
     this.targetUserId = record.targetUserId;
@@ -43,6 +45,7 @@ export class ProfileRecord {
     return {
       userId: this.userId,
       name: this.name,
+      email: this.email,
       giftIdeas: this.giftIdeas ? this.giftIdeas : '',
       address: this.address ? this.address : '',
       targetUserId: this.targetUserId,
@@ -56,6 +59,7 @@ export class ProfileRecord {
     return {
       userId: this.userId,
       name: this.name,
+      email: this.email,
       giftIdeas: this.giftIdeas,
       address: this.address
     };
@@ -71,6 +75,7 @@ export interface ProfileRecordConstructor {
 export interface DetailedProfileResponse {
   userId: string;
   name: string;
+  email: string;
   giftIdeas: string;
   address: string;
   targetUserId: string;
@@ -82,6 +87,7 @@ export interface DetailedProfileResponse {
 export interface BasicProfileResponse {
   userId: string;
   name: string;
+  email: string;
   giftIdeas: string;
   address: string;
 }
@@ -91,6 +97,7 @@ export class CreateProfileRequest {
   type: string;
   userId: string;
   name: string;
+  email: string;
   created: string;
   testRequest: boolean;
   recordExpiration: number;
@@ -102,6 +109,7 @@ export class CreateProfileRequest {
     this.name = user.name;
     this.type = `${PROFILE_TYPE_PREFIX}${user.userId}`;
     this.userId = user.userId;
+    this.email = user.email;
     if (group.testRequest) {
       const MINUTES_TO_LIVE = 30;
       const MILLISECONDS_TO_LIVE = MINUTES_TO_LIVE * 60 * 1000;

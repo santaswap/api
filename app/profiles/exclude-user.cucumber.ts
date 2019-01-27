@@ -14,11 +14,7 @@ export class ExcludeUser {
 
   @when(/a valid exclude user request is made/, null, TIMEOUT)
   public async exclude() {
-    const {
-      createAndJoinGroupResponse: group,
-      createUserResponse: user,
-      createAnotherUserResponse: anotherUser
-    } = this.sharedState;
+    const { createAndJoinGroupResponse: group, user, anotherUser } = this.sharedState;
     const params = {
       url: `${URL}/groups/${group.groupId}/users/${user.userId}/excludedUsers/${anotherUser.userId}`,
       method: 'post',
@@ -30,17 +26,12 @@ export class ExcludeUser {
 
   @then(/the API response will include the exclusion/)
   public validateExclusion() {
-    const {
-      excludeUserResponse: response,
-      createAndJoinGroupResponse: group,
-      createUserResponse: user,
-      createAnotherUserResponse: anotherUser
-    } = this.sharedState;
+    const { excludeUserResponse: response, createAndJoinGroupResponse: group, user, anotherUser } = this.sharedState;
     expect(response.userId).to.equal(user.userId);
     expect(response.name).to.equal(user.name);
     expect(response.address).to.be.a('string');
     expect(response.giftIdeas).to.be.a('string');
     expect(response.excludedUserIds).to.contain(anotherUser.userId);
-    expect(response).to.have.all.keys('userId', 'name', 'address', 'giftIdeas', 'excludedUserIds');
+    expect(response).to.have.all.keys('userId', 'name', 'address', 'email', 'giftIdeas', 'excludedUserIds');
   }
 }
