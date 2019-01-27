@@ -28,7 +28,6 @@ provider:
         - { Fn::GetAtt: [UsersTable, Arn] }
   environment:
     TEST_REQUEST_HEADER: SantaSwap-Test-Request
-    IOPIPE_TOKEN: ${env:IOPIPE_TOKEN}
     GROUPS_TABLE: { Ref: GroupsTable }
     GROUPS_TABLE_TYPE_INDEX: TypeIndex
     GROUPS_TABLE_CODE_INDEX: GroupCodeIndex
@@ -37,6 +36,9 @@ provider:
     STAGE: ${opt:stage, self:provider.stage}
 
 custom:
+  epsagon:
+    token: ${env:EPSAGON_TOKEN}
+    appName: ${self:service.name}-${opt:stage, self:provider.stage}
   stageProperties:
     default:
       enabled: false
