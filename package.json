@@ -11,13 +11,16 @@
     "deploy:domain": "sls create_domain",
     "remove:domain": "sls delete_domain",
     "pregenerate:swagger": "echo 'Generating swagger.json from docs/swagger.yml specification file'",
-    "generate:swagger": "yaml2json docs/swagger.yml --save"
+    "generate:swagger": "yaml2json docs/swagger.yml --save",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "@manwaring/lambda-wrapper": "^0.2.2",
     "chance": "^1.0.18",
     "epsagon": "^1.8.0",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "snyk": "^1.161.1"
   },
   "devDependencies": {
     "@manwaring/serverless-test-helper": "0.0.3",
@@ -51,5 +54,6 @@
     "hooks": {
       "pre-commit": "npm run generate:swagger"
     }
-  }
+  },
+  "snyk": true
 }
